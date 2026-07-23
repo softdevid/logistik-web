@@ -1,4 +1,4 @@
-export default function GrupUser() {
+export default function GroupUser() {
   return (
     <div className="p-6 lg:p-8">
       <h2 className="text-xl font-bold text-slate-900">Grup User</h2>

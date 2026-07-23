@@ -49,7 +49,7 @@ const MENU = [
     name: "Modul",
     icon: FolderOpenIcon,
     children: [
-      { name: "Pemasaran/penjualan", link: "/marketing-sales" },
+      { name: "Pemasaran/Penjualan", link: "/marketing-sales" },
       { name: "Layanan Pelanggan", link: "/customer-service" },
       { name: "Operasional", link: "/operations" },
     ],
@@ -63,6 +63,11 @@ const MENU = [
       { name: "Laporan Keuangan", link: "/financial-reports" },
       { name: "Customer Reports", link: "/customer-reports" },
     ],
+  },
+  {
+    name: "Ticketing",
+    icon: ChartBarIcon,
+    link: "/ticketting"
   },
 ];
 
@@ -296,7 +301,7 @@ export default function Header() {
           {profileOpen && (
             <div className="absolute right-0 top-[calc(100%+8px)] min-w-[200px] py-1.5 bg-white rounded-xl border border-slate-200 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.18)] z-50">
               <Link
-                to="/profil"
+                to="/profile"
                 onClick={() => setProfileOpen(false)}
                 className="flex items-center gap-2 px-4 py-2.5 text-[13.5px] text-slate-600 hover:text-[#0F5C4C] hover:bg-[#0F5C4C]/[0.06] transition-colors"
               >

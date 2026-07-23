@@ -1,4 +1,4 @@
-export default function HakAksesMenu() {
+export default function MenuAccess() {
   return (
     <div className="p-6 lg:p-8">
       <h2 className="text-xl font-bold text-slate-900">Hak Akses Menu</h2>
