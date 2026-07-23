@@ -1,0 +1,7 @@
+export default function GrupUser() {
+  return (
+    <div className="p-6 lg:p-8">
+      <h2 className="text-xl font-bold text-slate-900">Grup User</h2>
+    </div>
+  );
+}
