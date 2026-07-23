@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   HomeIcon,
-  TruckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   UserCircleIcon,
@@ -14,6 +13,7 @@ import {
   ChartBarIcon,
   Bars3Icon,
   XMarkIcon,
+  TicketIcon,
 } from "@heroicons/react/24/outline";
 
 
@@ -66,16 +66,16 @@ const MENU = [
   },
   {
     name: "Ticketing",
-    icon: ChartBarIcon,
-    link: "/ticketting"
+    icon: TicketIcon,
+    link: "/ticketting",
   },
 ];
 
 
-function Chevron({ open }) {
+function Chevron({ open, className = "" }) {
   return (
     <ChevronDownIcon
-      className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""} ${className}`}
     />
   );
 }
@@ -271,12 +271,11 @@ export default function Header() {
             {sidebarOpen ? <XMarkIcon className="w-5 h-5" /> : <Bars3Icon className="w-5 h-5" />}
           </button>
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#0F5C4C] flex items-center justify-center">
-              <TruckIcon className="w-[18px] h-[18px] text-white" />
-            </div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap">
-              Logistik-Web
-            </h1>
+            <img
+              src="/logo.svg"
+              alt="Logo"
+              className="w-20"
+            />
           </div>
         </div>
 
@@ -335,12 +334,11 @@ export default function Header() {
           <div className="absolute inset-0 bg-black/30" onClick={closeSidebar} />
           <div className="absolute inset-y-0 left-0 w-72 bg-white shadow-xl flex flex-col">
             <div className="px-4 h-[60px] flex items-center justify-between border-b border-slate-200 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#0F5C4C] flex items-center justify-center">
-                  <TruckIcon className="w-[18px] h-[18px] text-white" />
-                </div>
-                <h1 className="text-lg font-bold text-slate-900 tracking-tight">Logistik-Web</h1>
-              </div>
+              <img
+                src="/logo.svg"
+                alt="Logo"
+                className="w-20"
+              />
               <button
                 type="button"
                 onClick={closeSidebar}
