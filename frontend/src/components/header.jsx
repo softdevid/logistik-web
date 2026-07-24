@@ -40,7 +40,14 @@ const MENU = [
     name: "Master Data",
     icon: ListBulletIcon,
     children: [
-      { name: "Logistik", link: "/logistic" },
+      { name: "Logistik",
+        children: [
+          { name: "Area Logistik", link: "/logistics/areas" },
+          { name: "Divisi Logistik", link: "/logistics/division" },
+          { name: "Layanan Logistik", link: "/logistics/services" },
+          { name: "Kendaraan Logistik", link: "/logistics/vehicles" },
+        ]
+       },
       { name: "Vendor", link: "/vendor" },
       { name: "Shipment Status", link: "/shipment-status" },
     ],
@@ -49,8 +56,11 @@ const MENU = [
     name: "Modul",
     icon: FolderOpenIcon,
     children: [
-      { name: "Pemasaran/Penjualan", link: "/marketing-sales" },
-      { name: "Layanan Pelanggan", link: "/customer-service" },
+      { name: "Pemasaran/Penjualan", link: "/marketing" },
+      { name: "Layanan Pelanggan", children: [
+        { name: "Transaksi", link: "/transactions" },
+        { name: "Booking", link: "/bookings" },
+      ]},
       { name: "Operasional", link: "/operations" },
     ],
   },
