@@ -47,10 +47,16 @@ const MENU = [
           { name: "Layanan Logistik", link: "/logistics/services" },
           { name: "Kendaraan Logistik", link: "/logistics/vehicles" },
         ]
-       },
+      },
       { name: "Vendor", link: "/vendor" },
+      { name: "Perkiraan", link: "/perkiraan" },
       { name: "Shipment Status", link: "/shipment-status" },
     ],
+  },
+  {
+    name: "Akunting",
+    icon: ChartBarIcon,
+    link: "/akunting",
   },
   {
     name: "Modul",

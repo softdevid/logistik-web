@@ -14,6 +14,8 @@ import ServicesLogistic from './pages/master-data/logistics/ServicesLogistic'
 import VehiclesLogistic from './pages/master-data/logistics/VehiclesLogistic'
 import Vendor from './pages/master-data/Vendor'
 import ShipmentStatus from './pages/master-data/ShipmentStatus'
+import Perkiraan from './pages/master-data/Perkiraan'
+import Akunting from './pages/akunting/Akunting'
 import Marketing from './pages/module/Marketing'
 import Transaction from './pages/module/Transaction'
 import Booking from './pages/module/Booking'
@@ -42,6 +44,8 @@ function App() {
         <Route path="/logistics/services" element={<ServicesLogistic />} />
         <Route path="/logistics/vehicles" element={<VehiclesLogistic />} />
         <Route path="/vendor" element={<Vendor />} />
+        <Route path="/perkiraan" element={<Perkiraan />} />
+        <Route path="/akunting" element={<Akunting />} />
         <Route path="/shipment-status" element={<ShipmentStatus />} />
         <Route path="/marketing" element={<Marketing />} />
         <Route path="/transactions" element={<Transaction />} />
