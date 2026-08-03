@@ -5,8 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../../api";
 
 export default function LedgerPage() {
   const [items, setItems] = useState([]);
@@ -20,7 +19,7 @@ export default function LedgerPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/ledgers`);
+      const res = await apiRequest("/ledgers");
       if (res.ok) setItems(await res.json());
     } finally {
       setLoading(false);
@@ -44,9 +43,9 @@ export default function LedgerPage() {
   }
 
   async function handleSave() {
-    const url = editing ? `${API}/ledgers/${editing.id}` : `${API}/ledgers`;
+    const url = editing ? `/ledgers/${editing.id}` : `/ledgers`;
     const method = editing ? "PUT" : "POST";
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kode, nama }),
@@ -56,7 +55,7 @@ export default function LedgerPage() {
 
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus?")) return;
-    const res = await fetch(`${API}/ledgers/${id}`, { method: "DELETE" });
+    const res = await apiRequest(`/ledgers/${id}`, { method: "DELETE" });
     if (res.ok) fetchData();
   }
 

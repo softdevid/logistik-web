@@ -5,30 +5,29 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../api";
 
 const ERROR_MAP = {
   "name is required": "Nama harus diisi",
   "code is required": "Kode harus diisi",
   "divider is required": "Divider harus diisi",
-  "jenis kendaraan not found": "Jenis kendaraan tidak ditemukan",
-  "provinsi not found": "Provinsi tidak ditemukan",
-  "kabupaten not found": "Kabupaten tidak ditemukan",
-  "kecamatan not found": "Kecamatan tidak ditemukan",
-  "kelurahan not found": "Kelurahan tidak ditemukan",
-  "kode pos not found": "Kode pos tidak ditemukan",
-  "pemasaran not found": "Pemasaran tidak ditemukan",
+  "vehicle type not found": "Jenis kendaraan tidak ditemukan",
+  "province not found": "Provinsi tidak ditemukan",
+  "regency not found": "Kabupaten tidak ditemukan",
+  "district not found": "Kecamatan tidak ditemukan",
+  "village not found": "Kelurahan tidak ditemukan",
+  "postal code not found": "Kode pos tidak ditemukan",
+  "marketing not found": "Pemasaran tidak ditemukan",
   "driver not found": "Driver tidak ditemukan",
-  "kurir not found": "Kurir tidak ditemukan",
-  "moda not found": "Moda tidak ditemukan",
-  "kategori layanan not found": "Kategori layanan tidak ditemukan",
-  "layanan pengantaran not found": "Layanan pengantaran tidak ditemukan",
-  "jenis barang not found": "Jenis barang tidak ditemukan",
-  "jenis biaya not found": "Jenis biaya tidak ditemukan",
-  "termin not found": "Termin tidak ditemukan",
-  "kendaraan not found": "Kendaraan tidak ditemukan",
-  "jenis trucking not found": "Jenis trucking tidak ditemukan",
+  "courier not found": "Kurir tidak ditemukan",
+  "mode not found": "Moda tidak ditemukan",
+  "service category not found": "Kategori layanan tidak ditemukan",
+  "delivery service not found": "Layanan pengantaran tidak ditemukan",
+  "goods type not found": "Jenis barang tidak ditemukan",
+  "cost type not found": "Jenis biaya tidak ditemukan",
+  "term not found": "Termin tidak ditemukan",
+  "vehicle not found": "Kendaraan tidak ditemukan",
+  "trucking type not found": "Jenis trucking tidak ditemukan",
   "branch not found": "Cabang tidak ditemukan",
   "shipment status not found": "Shipment status tidak ditemukan",
 };
@@ -69,7 +68,7 @@ export default function CrudTab({ config }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/${tab.endpoint}`);
+      const res = await apiRequest(`/${tab.endpoint}`);
       if (res.ok) {
         const data = await res.json();
         setItems(Array.isArray(data) ? data : []);
@@ -99,7 +98,7 @@ export default function CrudTab({ config }) {
 
     Object.keys(fetches).forEach((key) => {
       const f = fields.find((f) => f.key === key);
-      fetch(`${API}/${f.fetch}`)
+      apiRequest(`/${f.fetch}`)
         .then((r) => r.json())
         .then((data) => {
           setDropdowns((prev) => ({
@@ -155,10 +154,10 @@ export default function CrudTab({ config }) {
     }, {}) };
 
     const url = editing
-      ? `${API}/${tab.endpoint}/${editing.id}`
-      : `${API}/${tab.endpoint}`;
+      ? `/${tab.endpoint}/${editing.id}`
+      : `/${tab.endpoint}`;
     const method = editing ? "PUT" : "POST";
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -175,7 +174,7 @@ export default function CrudTab({ config }) {
   // #delete
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus?")) return;
-    const res = await fetch(`${API}/${tab.endpoint}/${id}`, {
+    const res = await apiRequest(`/${tab.endpoint}/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {

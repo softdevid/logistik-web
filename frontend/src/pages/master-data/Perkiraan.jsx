@@ -5,8 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../../api";
 
 const emptyForm = {
   kode_rekening: "",
@@ -31,7 +30,7 @@ export default function Perkiraan() {
   const [kategoriAkuns, setKategoriAkuns] = useState([]);
   const [rugiLabaKategoris, setRugiLabaKategoris] = useState([]);
   const [kategoriCashflows, setKategoriCashflows] = useState([]);
-  const [cabangs, setCabangs] = useState([]);
+  const [branches, setCabangs] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -42,12 +41,12 @@ export default function Perkiraan() {
     setLoading(true);
     try {
       const [aRes, lRes, kRes, rRes, kcRes, cRes] = await Promise.all([
-        fetch(`${API}/perkiraan`),
-        fetch(`${API}/ledgers`),
-        fetch(`${API}/kategori-akuns`),
-        fetch(`${API}/rugi-laba-kategoris`),
-        fetch(`${API}/kategori-cashflows`),
-        fetch(`${API}/cabangs`),
+        apiRequest("/perkiraan"),
+        apiRequest("/ledgers"),
+        apiRequest("/account-categories"),
+        apiRequest("/profit-loss"),
+        apiRequest("/cashflows"),
+        apiRequest("/branches"),
       ]);
       if (aRes.ok) setAccounts(await aRes.json());
       if (lRes.ok) setLedgers(await lRes.json());
@@ -94,7 +93,7 @@ export default function Perkiraan() {
   }
 
   async function handleSave() {
-    const url = editing ? `${API}/perkiraan/${editing.id}` : `${API}/perkiraan`;
+    const url = editing ? `/perkiraan/${editing.id}` : `/perkiraan`;
     const method = editing ? "PUT" : "POST";
     const body = {
       ...form,
@@ -106,7 +105,7 @@ export default function Perkiraan() {
       cabang_id: form.cabang_id || null,
     };
     try {
-      const res = await fetch(url, {
+      const res = await apiRequest(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -123,7 +122,7 @@ export default function Perkiraan() {
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus akun ini?")) return;
     try {
-      const res = await fetch(`${API}/perkiraan/${id}`, { method: "DELETE" });
+      const res = await apiRequest(`/perkiraan/${id}`, { method: "DELETE" });
       if (res.ok) fetchData();
     } catch (e) {
       console.error(e);
@@ -348,7 +347,7 @@ export default function Perkiraan() {
                   <label className="block text-sm font-medium text-slate-700 mb-1">Cabang</label>
                   <select value={form.cabang_id || ""} onChange={(e) => setField("cabang_id", e.target.value ? Number(e.target.value) : null)} className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F5C4C]/30 focus:border-[#0F5C4C]">
                     <option value="">Pilih Cabang (Nasional)</option>
-                    {cabangs.map((c) => (
+                    {branches.map((c) => (
                       <option key={c.id} value={c.id}>{c.kode} - {c.nama}</option>
                     ))}
                   </select>

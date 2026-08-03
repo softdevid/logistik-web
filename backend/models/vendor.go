@@ -14,7 +14,7 @@ type Vendor struct {
 	Fax        string `json:"fax"`
 	Email      string `json:"email"`
 	NamaKontak string `gorm:"not null" json:"nama_kontak"`
-	Branch     string `json:"branch"` // atau ganti uint + FK ke tabel Cabang kalau sudah ada
+	Branch     string `json:"branch"` // atau ganti uint + FK ke tabel Branch kalau sudah ada
 	Status     string `gorm:"not null;default:Active" json:"status"`
 
 	// Relasi one-to-one ke tab lain

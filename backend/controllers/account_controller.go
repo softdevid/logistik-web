@@ -21,7 +21,7 @@ func GetAccount(c *gin.Context) {
 	id := c.Param("id")
 	var account models.Account
 	if err := config.DB.First(&account, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "akun tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "account not found"})
 		return
 	}
 	c.JSON(http.StatusOK, account)
@@ -44,7 +44,7 @@ func UpdateAccount(c *gin.Context) {
 	id := c.Param("id")
 	var existing models.Account
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "akun tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "account not found"})
 		return
 	}
 
@@ -55,20 +55,20 @@ func UpdateAccount(c *gin.Context) {
 	}
 
 	updates := map[string]interface{}{
-		"kode_rekening":           input.KodeRekening,
-		"inisial_akun":            input.InisialAkun,
-		"nama_rekening":           input.NamaRekening,
-		"induk_id":                input.IndukID,
-		"ledger_id":               input.LedgerID,
-		"kategori_akun_id":        input.KategoriAkunID,
-		"posisi":                  input.Posisi,
-		"normal_balance":          input.NormalBalance,
-		"tampil":                  input.Tampil,
-		"jenis_kategori":          input.JenisKategori,
-		"rugi_laba_id":            input.RugiLabaID,
-		"kategori_cashflow_id":    input.KategoriCashflowID,
-		"cabang_id":               input.CabangID,
-		"status":                  input.Status,
+		"kode_rekening":        input.KodeRekening,
+		"inisial_akun":         input.InisialAkun,
+		"nama_rekening":        input.NamaRekening,
+		"induk_id":             input.IndukID,
+		"ledger_id":            input.LedgerID,
+		"kategori_akun_id":     input.KategoriAkunID,
+		"posisi":               input.Posisi,
+		"normal_balance":       input.NormalBalance,
+		"tampil":               input.Tampil,
+		"jenis_kategori":       input.JenisKategori,
+		"rugi_laba_id":         input.RugiLabaID,
+		"kategori_cashflow_id": input.KategoriCashflowID,
+		"cabang_id":            input.CabangID,
+		"status":               input.Status,
 	}
 
 	if err := config.DB.Model(&existing).Updates(updates).Error; err != nil {
@@ -84,12 +84,12 @@ func DeleteAccount(c *gin.Context) {
 	id := c.Param("id")
 	var account models.Account
 	if err := config.DB.First(&account, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "akun tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "account not found"})
 		return
 	}
 	if err := config.DB.Delete(&account).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "akun berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "account deleted"})
 }

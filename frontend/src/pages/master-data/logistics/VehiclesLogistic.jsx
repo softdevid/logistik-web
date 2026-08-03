@@ -46,7 +46,7 @@ const config = {
         { key: "is_active", label: "Active", type: "checkbox", default: true, checkLabel: "Active", table: true },
         { key: "service_trucking", label: "Service Trucing", type: "checkbox", checkLabel: "Service Trucing", table: true },
         { key: "branch_id", label: "Branch", type: "select",
-          fetch: "cabangs", fetchLabel: "nama", table: true },
+          fetch: "branches", fetchLabel: "nama", table: true },
       ],
     },
     { label: "Jenis Kendaraan", endpoint: "vehicle-types", fields: NAME_STATUS },

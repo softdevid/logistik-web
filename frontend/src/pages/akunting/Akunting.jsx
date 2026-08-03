@@ -5,8 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../../api";
 const TABS = ["Ledger", "Kategori Akun", "Rugi Laba", "Kategori Cashflow"];
 
 export default function Akunting() {
@@ -25,10 +24,10 @@ export default function Akunting() {
     setLoading(true);
     try {
       const [lRes, kRes, rRes, cRes] = await Promise.all([
-        fetch(`${API}/ledgers`),
-        fetch(`${API}/kategori-akuns`),
-        fetch(`${API}/rugi-laba`),
-        fetch(`${API}/cashflows`),
+        apiRequest("/ledgers"),
+        apiRequest("/account-categories"),
+        apiRequest("/profit-loss"),
+        apiRequest("/cashflows"),
       ]);
       if (lRes.ok) setLedgers(await lRes.json());
       if (kRes.ok) setKategoriAkuns(await kRes.json());
@@ -54,8 +53,8 @@ export default function Akunting() {
   function currentEndpoint() {
     switch (activeTab) {
       case 0: return "ledgers";
-      case 1: return "kategori-akuns";
-      case 2: return "rugi-laba";
+      case 1: return "account-categories";
+      case 2: return "profit-loss";
       case 3: return "cashflows";
       default: return "";
     }
@@ -79,10 +78,10 @@ export default function Akunting() {
 
   async function handleSave() {
     const ep = currentEndpoint();
-    const url = editing ? `${API}/${ep}/${editing.id}` : `${API}/${ep}`;
+    const url = editing ? `/${ep}/${editing.id}` : `/${ep}`;
     const method = editing ? "PUT" : "POST";
     const body = hasKode() ? { kode: form.kode, nama: form.nama } : { nama: form.nama };
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -92,7 +91,7 @@ export default function Akunting() {
 
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus?")) return;
-    const res = await fetch(`${API}/${currentEndpoint()}/${id}`, { method: "DELETE" });
+    const res = await apiRequest(`/${currentEndpoint()}/${id}`, { method: "DELETE" });
     if (res.ok) fetchData();
   }
 

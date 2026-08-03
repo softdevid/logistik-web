@@ -9,16 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// #provinsi
+// #province
 
-func GetProvinsis(c *gin.Context) {
-	var items []logistics.Provinsi
+func GetProvinces(c *gin.Context) {
+	var items []logistics.Province
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateProvinsi(c *gin.Context) {
-	var input logistics.Provinsi
+func CreateProvince(c *gin.Context) {
+	var input logistics.Province
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -27,7 +27,9 @@ func CreateProvinsi(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -35,14 +37,14 @@ func CreateProvinsi(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateProvinsi(c *gin.Context) {
+func UpdateProvince(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.Provinsi
+	var existing logistics.Province
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "provinsi not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "province not found"})
 		return
 	}
-	var input logistics.Provinsi
+	var input logistics.Province
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -55,25 +57,25 @@ func UpdateProvinsi(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteProvinsi(c *gin.Context) {
+func DeleteProvince(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.Provinsi{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.Province{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "provinsi deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "province deleted"})
 }
 
-// #kabupaten
+// #regency
 
-func GetKabupatens(c *gin.Context) {
-	var items []logistics.Kabupaten
+func GetRegencies(c *gin.Context) {
+	var items []logistics.Regency
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKabupaten(c *gin.Context) {
-	var input logistics.Kabupaten
+func CreateRegency(c *gin.Context) {
+	var input logistics.Regency
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -82,7 +84,9 @@ func CreateKabupaten(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -90,14 +94,14 @@ func CreateKabupaten(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKabupaten(c *gin.Context) {
+func UpdateRegency(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.Kabupaten
+	var existing logistics.Regency
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kabupaten not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "regency not found"})
 		return
 	}
-	var input logistics.Kabupaten
+	var input logistics.Regency
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -110,25 +114,25 @@ func UpdateKabupaten(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKabupaten(c *gin.Context) {
+func DeleteRegency(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.Kabupaten{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.Regency{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kabupaten deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "regency deleted"})
 }
 
-// #kecamatan
+// #district
 
-func GetKecamatans(c *gin.Context) {
-	var items []logistics.Kecamatan
+func GetDistricts(c *gin.Context) {
+	var items []logistics.District
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKecamatan(c *gin.Context) {
-	var input logistics.Kecamatan
+func CreateDistrict(c *gin.Context) {
+	var input logistics.District
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -137,7 +141,9 @@ func CreateKecamatan(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -145,14 +151,14 @@ func CreateKecamatan(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKecamatan(c *gin.Context) {
+func UpdateDistrict(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.Kecamatan
+	var existing logistics.District
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kecamatan not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "district not found"})
 		return
 	}
-	var input logistics.Kecamatan
+	var input logistics.District
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -165,25 +171,25 @@ func UpdateKecamatan(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKecamatan(c *gin.Context) {
+func DeleteDistrict(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.Kecamatan{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.District{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kecamatan deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "district deleted"})
 }
 
-// #kelurahan
+// #village
 
-func GetKelurahan(c *gin.Context) {
-	var items []logistics.Kelurahan
+func GetVillages(c *gin.Context) {
+	var items []logistics.Village
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKelurahan(c *gin.Context) {
-	var input logistics.Kelurahan
+func CreateVillage(c *gin.Context) {
+	var input logistics.Village
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -192,7 +198,9 @@ func CreateKelurahan(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -200,14 +208,14 @@ func CreateKelurahan(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKelurahan(c *gin.Context) {
+func UpdateVillage(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.Kelurahan
+	var existing logistics.Village
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kelurahan not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "village not found"})
 		return
 	}
-	var input logistics.Kelurahan
+	var input logistics.Village
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -220,25 +228,25 @@ func UpdateKelurahan(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKelurahan(c *gin.Context) {
+func DeleteVillage(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.Kelurahan{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.Village{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kelurahan deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "village deleted"})
 }
 
-// #kodepos
+// #postalcode
 
-func GetKodePos(c *gin.Context) {
-	var items []logistics.KodePos
+func GetPostalCodes(c *gin.Context) {
+	var items []logistics.PostalCode
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKodePos(c *gin.Context) {
-	var input logistics.KodePos
+func CreatePostalCode(c *gin.Context) {
+	var input logistics.PostalCode
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -247,7 +255,9 @@ func CreateKodePos(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "code is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -255,14 +265,14 @@ func CreateKodePos(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKodePos(c *gin.Context) {
+func UpdatePostalCode(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.KodePos
+	var existing logistics.PostalCode
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kode pos not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "postal code not found"})
 		return
 	}
-	var input logistics.KodePos
+	var input logistics.PostalCode
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -275,11 +285,11 @@ func UpdateKodePos(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKodePos(c *gin.Context) {
+func DeletePostalCode(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.KodePos{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.PostalCode{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kode pos deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "postal code deleted"})
 }

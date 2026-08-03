@@ -31,7 +31,9 @@ func CreateShipmentStatus(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

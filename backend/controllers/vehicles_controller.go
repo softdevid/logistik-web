@@ -9,16 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// #kendaraan
+// #vehicle
 
-func GetKendaraans(c *gin.Context) {
-	var items []logistics.Kendaraan
+func GetVehicles(c *gin.Context) {
+	var items []logistics.Vehicle
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKendaraan(c *gin.Context) {
-	var input logistics.Kendaraan
+func CreateVehicle(c *gin.Context) {
+	var input logistics.Vehicle
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -28,13 +28,13 @@ func CreateKendaraan(c *gin.Context) {
 		return
 	}
 	if input.JenisTruckingID != nil {
-		if err := config.DB.First(&logistics.JenisTrucking{}, *input.JenisTruckingID).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "jenis trucking not found"})
+		if err := config.DB.First(&logistics.TruckingType{}, *input.JenisTruckingID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "trucking type not found"})
 			return
 		}
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistics.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistics.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
@@ -46,14 +46,14 @@ func CreateKendaraan(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKendaraan(c *gin.Context) {
+func UpdateVehicle(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.Kendaraan
+	var existing logistics.Vehicle
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kendaraan not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "vehicle not found"})
 		return
 	}
-	var input logistics.Kendaraan
+	var input logistics.Vehicle
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -63,13 +63,13 @@ func UpdateKendaraan(c *gin.Context) {
 		return
 	}
 	if input.JenisTruckingID != nil {
-		if err := config.DB.First(&logistics.JenisTrucking{}, *input.JenisTruckingID).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "jenis trucking not found"})
+		if err := config.DB.First(&logistics.TruckingType{}, *input.JenisTruckingID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "trucking type not found"})
 			return
 		}
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistics.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistics.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
@@ -96,25 +96,25 @@ func UpdateKendaraan(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKendaraan(c *gin.Context) {
+func DeleteVehicle(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.Kendaraan{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.Vehicle{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kendaraan deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "vehicle deleted"})
 }
 
-// #jeniskendaraan
+// #vehicletype
 
-func GetJenisKendaraans(c *gin.Context) {
-	var items []logistics.JenisKendaraan
+func GetVehicleTypes(c *gin.Context) {
+	var items []logistics.VehicleType
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateJenisKendaraan(c *gin.Context) {
-	var input logistics.JenisKendaraan
+func CreateVehicleType(c *gin.Context) {
+	var input logistics.VehicleType
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -123,7 +123,9 @@ func CreateJenisKendaraan(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -131,14 +133,14 @@ func CreateJenisKendaraan(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateJenisKendaraan(c *gin.Context) {
+func UpdateVehicleType(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.JenisKendaraan
+	var existing logistics.VehicleType
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "jenis kendaraan not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "jenis vehicle not found"})
 		return
 	}
-	var input logistics.JenisKendaraan
+	var input logistics.VehicleType
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -151,25 +153,25 @@ func UpdateJenisKendaraan(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteJenisKendaraan(c *gin.Context) {
+func DeleteVehicleType(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.JenisKendaraan{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.VehicleType{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "jenis kendaraan deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "jenis vehicle deleted"})
 }
 
-// #jenistrucking
+// #truckingtype
 
-func GetJenisTruckings(c *gin.Context) {
-	var items []logistics.JenisTrucking
+func GetTruckingTypes(c *gin.Context) {
+	var items []logistics.TruckingType
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateJenisTrucking(c *gin.Context) {
-	var input logistics.JenisTrucking
+func CreateTruckingType(c *gin.Context) {
+	var input logistics.TruckingType
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -178,7 +180,9 @@ func CreateJenisTrucking(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
 		return
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -186,14 +190,14 @@ func CreateJenisTrucking(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateJenisTrucking(c *gin.Context) {
+func UpdateTruckingType(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistics.JenisTrucking
+	var existing logistics.TruckingType
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "jenis trucking not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "trucking type not found"})
 		return
 	}
-	var input logistics.JenisTrucking
+	var input logistics.TruckingType
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -206,11 +210,11 @@ func UpdateJenisTrucking(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteJenisTrucking(c *gin.Context) {
+func DeleteTruckingType(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistics.JenisTrucking{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistics.TruckingType{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "jenis trucking deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "trucking type deleted"})
 }

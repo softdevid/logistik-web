@@ -22,7 +22,7 @@ func GetVendor(c *gin.Context) {
 	id := c.Param("id")
 	var vendor models.Vendor
 	if err := config.DB.Preload("Npwp").Preload("Accounting").First(&vendor, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "vendor tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "vendor not found"})
 		return
 	}
 	c.JSON(http.StatusOK, vendor)
@@ -79,7 +79,7 @@ func UpdateVendor(c *gin.Context) {
 
 	var existing models.Vendor
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "vendor tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "vendor not found"})
 		return
 	}
 
@@ -92,17 +92,17 @@ func UpdateVendor(c *gin.Context) {
 	tx := config.DB.Begin()
 
 	updates := map[string]interface{}{
-		"name":         input.Name,
-		"address1":     input.Address1,
-		"address2":     input.Address2,
-		"city":         input.City,
-		"code_pos":     input.CodePos,
-		"no_hp":        input.NoHp,
-		"fax":          input.Fax,
-		"email":        input.Email,
-		"nama_kontak":  input.NamaKontak,
-		"branch":       input.Branch,
-		"status":       input.Status,
+		"name":        input.Name,
+		"address1":    input.Address1,
+		"address2":    input.Address2,
+		"city":        input.City,
+		"code_pos":    input.CodePos,
+		"no_hp":       input.NoHp,
+		"fax":         input.Fax,
+		"email":       input.Email,
+		"nama_kontak": input.NamaKontak,
+		"branch":      input.Branch,
+		"status":      input.Status,
 	}
 	if err := tx.Model(&existing).Updates(updates).Error; err != nil {
 		tx.Rollback()
@@ -131,11 +131,11 @@ func UpdateVendor(c *gin.Context) {
 	var existingAcc models.Accounting
 	if err := tx.Where("vendor_id = ?", idUint).First(&existingAcc).Error; err == nil {
 		accUpdates := map[string]interface{}{
-			"debit_account_id":           input.Accounting.DebitAccountID,
-			"credit_hutang_account_id":   input.Accounting.CreditHutangAccountID,
+			"debit_account_id":             input.Accounting.DebitAccountID,
+			"credit_hutang_account_id":     input.Accounting.CreditHutangAccountID,
 			"credit_pendapatan_account_id": input.Accounting.CreditPendapatanAccountID,
-			"bagi_hasil_percent":         input.Accounting.BagiHasilPercent,
-			"komisi_percent":             input.Accounting.KomisiPercent,
+			"bagi_hasil_percent":           input.Accounting.BagiHasilPercent,
+			"komisi_percent":               input.Accounting.KomisiPercent,
 		}
 		tx.Model(&existingAcc).Updates(accUpdates)
 	} else if input.Accounting.DebitAccountID != 0 || input.Accounting.CreditHutangAccountID != 0 || input.Accounting.CreditPendapatanAccountID != 0 {
@@ -155,7 +155,7 @@ func DeleteVendor(c *gin.Context) {
 	id := c.Param("id")
 	var vendor models.Vendor
 	if err := config.DB.First(&vendor, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "vendor tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "vendor not found"})
 		return
 	}
 
@@ -165,7 +165,7 @@ func DeleteVendor(c *gin.Context) {
 	tx.Delete(&vendor)
 	tx.Commit()
 
-	c.JSON(http.StatusOK, gin.H{"message": "vendor berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "vendor deleted"})
 }
 
 func GetAccounts(c *gin.Context) {
@@ -177,8 +177,8 @@ func GetAccounts(c *gin.Context) {
 	c.JSON(http.StatusOK, accounts)
 }
 
-func GetCabangs(c *gin.Context) {
-	var cabangs []models.Cabang
+func GetBranches(c *gin.Context) {
+	var cabangs []models.Branch
 	if err := config.DB.Find(&cabangs).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

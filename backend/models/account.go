@@ -15,27 +15,27 @@ type Ledger struct {
 	Nama string `gorm:"size:100;not null" json:"nama"`            // AKTIVA LANCAR
 }
 
-// KategoriAkun = dropdown "Kategori Akun", contoh: "AKTIVA LANCAR/TETAP"
-type KategoriAkun struct {
+// AccountCategory = dropdown "Kategori Akun", contoh: "AKTIVA LANCAR/TETAP"
+type AccountCategory struct {
 	ID   uint   `gorm:"primaryKey" json:"id"`
 	Nama string `gorm:"size:100;not null" json:"nama"`
 }
 
-// RugiLabaKategori = dropdown "Rugi Laba", contoh: "Test | TRX LabaRugi"
-type RugiLabaKategori struct {
+// ProfitLossCategory = dropdown "Rugi Laba", contoh: "Test | TRX LabaRugi"
+type ProfitLossCategory struct {
 	ID   uint   `gorm:"primaryKey" json:"id"`
 	Kode string `gorm:"size:20" json:"kode"`
 	Nama string `gorm:"size:100;not null" json:"nama"`
 }
 
-// KategoriCashflow = dropdown "Kategori Cashflow" (opsional, boleh kosong)
-type KategoriCashflow struct {
+// CashflowCategory = dropdown "Kategori Cashflow" (opsional, boleh kosong)
+type CashflowCategory struct {
 	ID   uint   `gorm:"primaryKey" json:"id"`
 	Nama string `gorm:"size:100;not null" json:"nama"`
 }
 
-// Cabang = dropdown "Cabang" (null di Account berarti "Nasional")
-type Cabang struct {
+// Branch = dropdown "Cabang" (null di Account berarti "Nasional")
+type Branch struct {
 	ID   uint   `gorm:"primaryKey" json:"id"`
 	Kode string `gorm:"size:20;uniqueIndex;not null" json:"kode"`
 	Nama string `gorm:"size:100;not null" json:"nama"`
@@ -80,8 +80,8 @@ type Account struct {
 	LedgerID uint   `gorm:"not null;index" json:"ledger_id"`
 	Ledger   Ledger `gorm:"foreignKey:LedgerID" json:"ledger,omitempty"`
 
-	KategoriAkunID uint         `gorm:"not null;index" json:"kategori_akun_id"`
-	KategoriAkun   KategoriAkun `gorm:"foreignKey:KategoriAkunID" json:"kategori_akun,omitempty"`
+	KategoriAkunID uint            `gorm:"not null;index" json:"kategori_akun_id"`
+	KategoriAkun   AccountCategory `gorm:"foreignKey:KategoriAkunID" json:"kategori_akun,omitempty"`
 
 	// Enum tetap, lihat konstanta di atas
 	Posisi        string `gorm:"size:20;not null" json:"posisi"`         // Neraca / Rugi Laba
@@ -89,14 +89,14 @@ type Account struct {
 	Tampil        string `gorm:"size:10;not null;default:Show" json:"tampil"`
 	JenisKategori string `gorm:"size:20;not null" json:"jenis_kategori"` // Parent / Child
 
-	RugiLabaID *uint             `gorm:"index" json:"rugi_laba_id"` // nullable, tidak semua akun masuk laba rugi
-	RugiLaba   *RugiLabaKategori `gorm:"foreignKey:RugiLabaID" json:"rugi_laba,omitempty"`
+	RugiLabaID *uint               `gorm:"index" json:"rugi_laba_id"` // nullable, tidak semua akun masuk laba rugi
+	RugiLaba   *ProfitLossCategory `gorm:"foreignKey:RugiLabaID" json:"rugi_laba,omitempty"`
 
 	KategoriCashflowID *uint             `gorm:"index" json:"kategori_cashflow_id"` // nullable ("Please Select...")
-	KategoriCashflow   *KategoriCashflow `gorm:"foreignKey:KategoriCashflowID" json:"kategori_cashflow,omitempty"`
+	KategoriCashflow   *CashflowCategory `gorm:"foreignKey:KategoriCashflowID" json:"kategori_cashflow,omitempty"`
 
 	CabangID *uint   `gorm:"index" json:"cabang_id"` // nullable = Nasional
-	Cabang   *Cabang `gorm:"foreignKey:CabangID" json:"cabang,omitempty"`
+	Cabang   *Branch `gorm:"foreignKey:CabangID" json:"cabang,omitempty"`
 
 	Status bool `gorm:"not null;default:true" json:"status"` // toggle ON/OFF di form
 

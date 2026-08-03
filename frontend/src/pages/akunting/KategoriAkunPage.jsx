@@ -5,8 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../../api";
 
 export default function KategoriAkunPage() {
   const [items, setItems] = useState([]);
@@ -19,7 +18,7 @@ export default function KategoriAkunPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/kategori-akuns`);
+      const res = await apiRequest("/account-categories");
       if (res.ok) setItems(await res.json());
     } finally {
       setLoading(false);
@@ -41,9 +40,9 @@ export default function KategoriAkunPage() {
   }
 
   async function handleSave() {
-    const url = editing ? `${API}/kategori-akuns/${editing.id}` : `${API}/kategori-akuns`;
+    const url = editing ? `/account-categories/${editing.id}` : `/account-categories`;
     const method = editing ? "PUT" : "POST";
-    const res = await fetch(url, {
+    const res = await apiRequest(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nama }),
@@ -53,7 +52,7 @@ export default function KategoriAkunPage() {
 
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus?")) return;
-    const res = await fetch(`${API}/kategori-akuns/${id}`, { method: "DELETE" });
+    const res = await apiRequest(`/account-categories/${id}`, { method: "DELETE" });
     if (res.ok) fetchData();
   }
 

@@ -10,7 +10,7 @@ import (
 
 // #ledger
 
-func GetLedgersAll(c *gin.Context) {
+func GetLedgers(c *gin.Context) {
 	var items []models.Ledger
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
@@ -33,7 +33,7 @@ func UpdateLedger(c *gin.Context) {
 	id := c.Param("id")
 	var existing models.Ledger
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "ledger tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "ledger not found"})
 		return
 	}
 	var input models.Ledger
@@ -54,19 +54,19 @@ func DeleteLedger(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "ledger berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "ledger deleted"})
 }
 
-// #kategoriakun
+// #accountcategory
 
-func GetKategoriAkunsAll(c *gin.Context) {
-	var items []models.KategoriAkun
+func GetAccountCategories(c *gin.Context) {
+	var items []models.AccountCategory
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKategoriAkun(c *gin.Context) {
-	var input models.KategoriAkun
+func CreateAccountCategory(c *gin.Context) {
+	var input models.AccountCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -78,14 +78,14 @@ func CreateKategoriAkun(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKategoriAkun(c *gin.Context) {
+func UpdateAccountCategory(c *gin.Context) {
 	id := c.Param("id")
-	var existing models.KategoriAkun
+	var existing models.AccountCategory
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kategori akun tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "account category not found"})
 		return
 	}
-	var input models.KategoriAkun
+	var input models.AccountCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -94,25 +94,25 @@ func UpdateKategoriAkun(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKategoriAkun(c *gin.Context) {
+func DeleteAccountCategory(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&models.KategoriAkun{}, id).Error; err != nil {
+	if err := config.DB.Delete(&models.AccountCategory{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kategori akun berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "account category deleted"})
 }
 
-// #rugilaba
+// #profitlosscategory
 
-func GetRugiLabaAll(c *gin.Context) {
-	var items []models.RugiLabaKategori
+func GetProfitLossCategories(c *gin.Context) {
+	var items []models.ProfitLossCategory
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateRugiLaba(c *gin.Context) {
-	var input models.RugiLabaKategori
+func CreateProfitLossCategory(c *gin.Context) {
+	var input models.ProfitLossCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -124,14 +124,14 @@ func CreateRugiLaba(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateRugiLaba(c *gin.Context) {
+func UpdateProfitLossCategory(c *gin.Context) {
 	id := c.Param("id")
-	var existing models.RugiLabaKategori
+	var existing models.ProfitLossCategory
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kategori rugi laba tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "profit loss category not found"})
 		return
 	}
-	var input models.RugiLabaKategori
+	var input models.ProfitLossCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -143,25 +143,25 @@ func UpdateRugiLaba(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteRugiLaba(c *gin.Context) {
+func DeleteProfitLossCategory(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&models.RugiLabaKategori{}, id).Error; err != nil {
+	if err := config.DB.Delete(&models.ProfitLossCategory{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kategori rugi laba berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "profit loss category deleted"})
 }
 
-// #cashflow
+// #cashflowcategory
 
-func GetCashflowAll(c *gin.Context) {
-	var items []models.KategoriCashflow
+func GetCashflowCategories(c *gin.Context) {
+	var items []models.CashflowCategory
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateCashflow(c *gin.Context) {
-	var input models.KategoriCashflow
+func CreateCashflowCategory(c *gin.Context) {
+	var input models.CashflowCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -173,14 +173,14 @@ func CreateCashflow(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateCashflow(c *gin.Context) {
+func UpdateCashflowCategory(c *gin.Context) {
 	id := c.Param("id")
-	var existing models.KategoriCashflow
+	var existing models.CashflowCategory
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kategori cashflow tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "cashflow category not found"})
 		return
 	}
-	var input models.KategoriCashflow
+	var input models.CashflowCategory
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -189,11 +189,11 @@ func UpdateCashflow(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteCashflow(c *gin.Context) {
+func DeleteCashflowCategory(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&models.KategoriCashflow{}, id).Error; err != nil {
+	if err := config.DB.Delete(&models.CashflowCategory{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kategori cashflow berhasil dihapus"})
+	c.JSON(http.StatusOK, gin.H{"message": "cashflow category deleted"})
 }

@@ -5,8 +5,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-const API = "http://localhost:8080/api";
+import { apiRequest } from "../../api";
 
 const TABS = ["Data Vendor", "NPWP", "Accounting"];
 
@@ -35,7 +34,7 @@ const emptyVendor = {
 export default function Vendor() {
   const [vendors, setVendors] = useState([]);
   const [accounts, setAccounts] = useState([]);
-  const [cabangs, setCabangs] = useState([]);
+  const [branches, setCabangs] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -47,9 +46,9 @@ export default function Vendor() {
     setLoading(true);
     try {
       const [vRes, aRes, cRes] = await Promise.all([
-        fetch(`${API}/vendors`),
-        fetch(`${API}/perkiraan`),
-        fetch(`${API}/cabangs`),
+        apiRequest("/vendors"),
+        apiRequest("/perkiraan"),
+        apiRequest("/branches"),
       ]);
       if (vRes.ok) setVendors(await vRes.json());
       if (aRes.ok) setAccounts(await aRes.json());
@@ -105,10 +104,10 @@ export default function Vendor() {
   }
 
   async function handleSave() {
-    const url = editing ? `${API}/vendors/${editing.id}` : `${API}/vendors`;
+    const url = editing ? `/vendors/${editing.id}` : `/vendors`;
     const method = editing ? "PUT" : "POST";
     try {
-      const res = await fetch(url, {
+      const res = await apiRequest(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -125,7 +124,7 @@ export default function Vendor() {
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus vendor ini?")) return;
     try {
-      const res = await fetch(`${API}/vendors/${id}`, { method: "DELETE" });
+      const res = await apiRequest(`/vendors/${id}`, { method: "DELETE" });
       if (res.ok) fetchData();
     } catch (e) {
       console.error(e);
@@ -386,7 +385,7 @@ export default function Vendor() {
                       className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F5C4C]/30 focus:border-[#0F5C4C]"
                     >
                       <option value="">Pilih Cabang</option>
-                      {cabangs.map((c) => (
+                      {branches.map((c) => (
                         <option key={c.id} value={c.nama}>{c.kode} - {c.nama}</option>
                       ))}
                     </select>

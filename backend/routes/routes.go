@@ -2,6 +2,7 @@ package routes
 
 import (
 	"backend/controllers"
+	"backend/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +16,19 @@ func SetUpRoutes(r *gin.Engine) {
 
 	api := r.Group("/api")
 	{
+		// #auth — endpoint publik (tanpa token)
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", controllers.Register)
+			auth.POST("/login", controllers.Login)
+			auth.POST("/refresh", controllers.Refresh)
+			auth.POST("/logout", controllers.Logout)
+			auth.GET("/me", middleware.AuthMiddleware(), controllers.Me)
+		}
+
+		// semua route di bawah ini wajib login (Bearer access token)
+		api.Use(middleware.AuthMiddleware())
+
 		vendors := api.Group("/vendors")
 		{
 			vendors.GET("", controllers.GetVendors)
@@ -24,7 +38,7 @@ func SetUpRoutes(r *gin.Engine) {
 			vendors.DELETE("/:id", controllers.DeleteVendor)
 		}
 
-		api.GET("/cabangs", controllers.GetCabangs)
+		api.GET("/branches", controllers.GetBranches)
 
 		// #shipmentstatus
 		shipmentStatuses := api.Group("/shipment-statuses")
@@ -46,84 +60,84 @@ func SetUpRoutes(r *gin.Engine) {
 
 		ledgers := api.Group("/ledgers")
 		{
-			ledgers.GET("", controllers.GetLedgersAll)
+			ledgers.GET("", controllers.GetLedgers)
 			ledgers.POST("", controllers.CreateLedger)
 			ledgers.PUT("/:id", controllers.UpdateLedger)
 			ledgers.DELETE("/:id", controllers.DeleteLedger)
 		}
 
-		kategoriAkuns := api.Group("/account-categories")
+		accountCategories := api.Group("/account-categories")
 		{
-			kategoriAkuns.GET("", controllers.GetKategoriAkunsAll)
-			kategoriAkuns.POST("", controllers.CreateKategoriAkun)
-			kategoriAkuns.PUT("/:id", controllers.UpdateKategoriAkun)
-			kategoriAkuns.DELETE("/:id", controllers.DeleteKategoriAkun)
+			accountCategories.GET("", controllers.GetAccountCategories)
+			accountCategories.POST("", controllers.CreateAccountCategory)
+			accountCategories.PUT("/:id", controllers.UpdateAccountCategory)
+			accountCategories.DELETE("/:id", controllers.DeleteAccountCategory)
 		}
 
-		rugiLaba := api.Group("/profit-loss")
+		profitLosses := api.Group("/profit-loss")
 		{
-			rugiLaba.GET("", controllers.GetRugiLabaAll)
-			rugiLaba.POST("", controllers.CreateRugiLaba)
-			rugiLaba.PUT("/:id", controllers.UpdateRugiLaba)
-			rugiLaba.DELETE("/:id", controllers.DeleteRugiLaba)
+			profitLosses.GET("", controllers.GetProfitLossCategories)
+			profitLosses.POST("", controllers.CreateProfitLossCategory)
+			profitLosses.PUT("/:id", controllers.UpdateProfitLossCategory)
+			profitLosses.DELETE("/:id", controllers.DeleteProfitLossCategory)
 		}
 
 		cashflows := api.Group("/cashflows")
 		{
-			cashflows.GET("", controllers.GetCashflowAll)
-			cashflows.POST("", controllers.CreateCashflow)
-			cashflows.PUT("/:id", controllers.UpdateCashflow)
-			cashflows.DELETE("/:id", controllers.DeleteCashflow)
+			cashflows.GET("", controllers.GetCashflowCategories)
+			cashflows.POST("", controllers.CreateCashflowCategory)
+			cashflows.PUT("/:id", controllers.UpdateCashflowCategory)
+			cashflows.DELETE("/:id", controllers.DeleteCashflowCategory)
 		}
 
 		// #area
 		provinces := api.Group("/provinces")
 		{
-			provinces.GET("", controllers.GetProvinsis)
-			provinces.POST("", controllers.CreateProvinsi)
-			provinces.PUT("/:id", controllers.UpdateProvinsi)
-			provinces.DELETE("/:id", controllers.DeleteProvinsi)
+			provinces.GET("", controllers.GetProvinces)
+			provinces.POST("", controllers.CreateProvince)
+			provinces.PUT("/:id", controllers.UpdateProvince)
+			provinces.DELETE("/:id", controllers.DeleteProvince)
 		}
 
 		regencies := api.Group("/regencies")
 		{
-			regencies.GET("", controllers.GetKabupatens)
-			regencies.POST("", controllers.CreateKabupaten)
-			regencies.PUT("/:id", controllers.UpdateKabupaten)
-			regencies.DELETE("/:id", controllers.DeleteKabupaten)
+			regencies.GET("", controllers.GetRegencies)
+			regencies.POST("", controllers.CreateRegency)
+			regencies.PUT("/:id", controllers.UpdateRegency)
+			regencies.DELETE("/:id", controllers.DeleteRegency)
 		}
 
 		districts := api.Group("/districts")
 		{
-			districts.GET("", controllers.GetKecamatans)
-			districts.POST("", controllers.CreateKecamatan)
-			districts.PUT("/:id", controllers.UpdateKecamatan)
-			districts.DELETE("/:id", controllers.DeleteKecamatan)
+			districts.GET("", controllers.GetDistricts)
+			districts.POST("", controllers.CreateDistrict)
+			districts.PUT("/:id", controllers.UpdateDistrict)
+			districts.DELETE("/:id", controllers.DeleteDistrict)
 		}
 
 		villages := api.Group("/villages")
 		{
-			villages.GET("", controllers.GetKelurahan)
-			villages.POST("", controllers.CreateKelurahan)
-			villages.PUT("/:id", controllers.UpdateKelurahan)
-			villages.DELETE("/:id", controllers.DeleteKelurahan)
+			villages.GET("", controllers.GetVillages)
+			villages.POST("", controllers.CreateVillage)
+			villages.PUT("/:id", controllers.UpdateVillage)
+			villages.DELETE("/:id", controllers.DeleteVillage)
 		}
 
 		postalCodes := api.Group("/postal-codes")
 		{
-			postalCodes.GET("", controllers.GetKodePos)
-			postalCodes.POST("", controllers.CreateKodePos)
-			postalCodes.PUT("/:id", controllers.UpdateKodePos)
-			postalCodes.DELETE("/:id", controllers.DeleteKodePos)
+			postalCodes.GET("", controllers.GetPostalCodes)
+			postalCodes.POST("", controllers.CreatePostalCode)
+			postalCodes.PUT("/:id", controllers.UpdatePostalCode)
+			postalCodes.DELETE("/:id", controllers.DeletePostalCode)
 		}
 
 		// #division
 		marketing := api.Group("/marketing")
 		{
-			marketing.GET("", controllers.GetPemasarans)
-			marketing.POST("", controllers.CreatePemasaran)
-			marketing.PUT("/:id", controllers.UpdatePemasaran)
-			marketing.DELETE("/:id", controllers.DeletePemasaran)
+			marketing.GET("", controllers.GetMarketings)
+			marketing.POST("", controllers.CreateMarketing)
+			marketing.PUT("/:id", controllers.UpdateMarketing)
+			marketing.DELETE("/:id", controllers.DeleteMarketing)
 		}
 
 		drivers := api.Group("/drivers")
@@ -136,84 +150,84 @@ func SetUpRoutes(r *gin.Engine) {
 
 		couriers := api.Group("/couriers")
 		{
-			couriers.GET("", controllers.GetKurirs)
-			couriers.POST("", controllers.CreateKurir)
-			couriers.PUT("/:id", controllers.UpdateKurir)
-			couriers.DELETE("/:id", controllers.DeleteKurir)
+			couriers.GET("", controllers.GetCouriers)
+			couriers.POST("", controllers.CreateCourier)
+			couriers.PUT("/:id", controllers.UpdateCourier)
+			couriers.DELETE("/:id", controllers.DeleteCourier)
 		}
 
 		// #services
 		modes := api.Group("/modes")
 		{
-			modes.GET("", controllers.GetModas)
-			modes.POST("", controllers.CreateModa)
-			modes.PUT("/:id", controllers.UpdateModa)
-			modes.DELETE("/:id", controllers.DeleteModa)
+			modes.GET("", controllers.GetModes)
+			modes.POST("", controllers.CreateMode)
+			modes.PUT("/:id", controllers.UpdateMode)
+			modes.DELETE("/:id", controllers.DeleteMode)
 		}
 
 		serviceCategories := api.Group("/service-categories")
 		{
-			serviceCategories.GET("", controllers.GetKategoriLayanans)
-			serviceCategories.POST("", controllers.CreateKategoriLayanan)
-			serviceCategories.PUT("/:id", controllers.UpdateKategoriLayanan)
-			serviceCategories.DELETE("/:id", controllers.DeleteKategoriLayanan)
+			serviceCategories.GET("", controllers.GetServiceCategories)
+			serviceCategories.POST("", controllers.CreateServiceCategory)
+			serviceCategories.PUT("/:id", controllers.UpdateServiceCategory)
+			serviceCategories.DELETE("/:id", controllers.DeleteServiceCategory)
 		}
 
 		deliveryServices := api.Group("/delivery-services")
 		{
-			deliveryServices.GET("", controllers.GetLayananPengantarans)
-			deliveryServices.POST("", controllers.CreateLayananPengantaran)
-			deliveryServices.PUT("/:id", controllers.UpdateLayananPengantaran)
-			deliveryServices.DELETE("/:id", controllers.DeleteLayananPengantaran)
+			deliveryServices.GET("", controllers.GetDeliveryServices)
+			deliveryServices.POST("", controllers.CreateDeliveryService)
+			deliveryServices.PUT("/:id", controllers.UpdateDeliveryService)
+			deliveryServices.DELETE("/:id", controllers.DeleteDeliveryService)
 		}
 
 		goodsTypes := api.Group("/goods-types")
 		{
-			goodsTypes.GET("", controllers.GetJenisBarangs)
-			goodsTypes.POST("", controllers.CreateJenisBarang)
-			goodsTypes.PUT("/:id", controllers.UpdateJenisBarang)
-			goodsTypes.DELETE("/:id", controllers.DeleteJenisBarang)
+			goodsTypes.GET("", controllers.GetGoodsTypes)
+			goodsTypes.POST("", controllers.CreateGoodsType)
+			goodsTypes.PUT("/:id", controllers.UpdateGoodsType)
+			goodsTypes.DELETE("/:id", controllers.DeleteGoodsType)
 		}
 
 		costTypes := api.Group("/cost-types")
 		{
-			costTypes.GET("", controllers.GetJenisBiayas)
-			costTypes.POST("", controllers.CreateJenisBiaya)
-			costTypes.PUT("/:id", controllers.UpdateJenisBiaya)
-			costTypes.DELETE("/:id", controllers.DeleteJenisBiaya)
+			costTypes.GET("", controllers.GetCostTypes)
+			costTypes.POST("", controllers.CreateCostType)
+			costTypes.PUT("/:id", controllers.UpdateCostType)
+			costTypes.DELETE("/:id", controllers.DeleteCostType)
 		}
 
 		terms := api.Group("/terms")
 		{
-			terms.GET("", controllers.GetTermins)
-			terms.POST("", controllers.CreateTermin)
-			terms.PUT("/:id", controllers.UpdateTermin)
-			terms.DELETE("/:id", controllers.DeleteTermin)
+			terms.GET("", controllers.GetTerms)
+			terms.POST("", controllers.CreateTerm)
+			terms.PUT("/:id", controllers.UpdateTerm)
+			terms.DELETE("/:id", controllers.DeleteTerm)
 		}
 
 		// #vehicles
 		vehicles := api.Group("/vehicles")
 		{
-			vehicles.GET("", controllers.GetKendaraans)
-			vehicles.POST("", controllers.CreateKendaraan)
-			vehicles.PUT("/:id", controllers.UpdateKendaraan)
-			vehicles.DELETE("/:id", controllers.DeleteKendaraan)
+			vehicles.GET("", controllers.GetVehicles)
+			vehicles.POST("", controllers.CreateVehicle)
+			vehicles.PUT("/:id", controllers.UpdateVehicle)
+			vehicles.DELETE("/:id", controllers.DeleteVehicle)
 		}
 
 		vehicleTypes := api.Group("/vehicle-types")
 		{
-			vehicleTypes.GET("", controllers.GetJenisKendaraans)
-			vehicleTypes.POST("", controllers.CreateJenisKendaraan)
-			vehicleTypes.PUT("/:id", controllers.UpdateJenisKendaraan)
-			vehicleTypes.DELETE("/:id", controllers.DeleteJenisKendaraan)
+			vehicleTypes.GET("", controllers.GetVehicleTypes)
+			vehicleTypes.POST("", controllers.CreateVehicleType)
+			vehicleTypes.PUT("/:id", controllers.UpdateVehicleType)
+			vehicleTypes.DELETE("/:id", controllers.DeleteVehicleType)
 		}
 
 		truckingTypes := api.Group("/trucking-types")
 		{
-			truckingTypes.GET("", controllers.GetJenisTruckings)
-			truckingTypes.POST("", controllers.CreateJenisTrucking)
-			truckingTypes.PUT("/:id", controllers.UpdateJenisTrucking)
-			truckingTypes.DELETE("/:id", controllers.DeleteJenisTrucking)
+			truckingTypes.GET("", controllers.GetTruckingTypes)
+			truckingTypes.POST("", controllers.CreateTruckingType)
+			truckingTypes.PUT("/:id", controllers.UpdateTruckingType)
+			truckingTypes.DELETE("/:id", controllers.DeleteTruckingType)
 		}
 	}
 }

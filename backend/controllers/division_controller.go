@@ -9,16 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// #pemasaran
+// #marketing
 
-func GetPemasarans(c *gin.Context) {
-	var items []logistik.Pemasaran
+func GetMarketings(c *gin.Context) {
+	var items []logistik.Marketing
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreatePemasaran(c *gin.Context) {
-	var input logistik.Pemasaran
+func CreateMarketing(c *gin.Context) {
+	var input logistik.Marketing
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -28,12 +28,14 @@ func CreatePemasaran(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -41,14 +43,14 @@ func CreatePemasaran(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdatePemasaran(c *gin.Context) {
+func UpdateMarketing(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistik.Pemasaran
+	var existing logistik.Marketing
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "pemasaran not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "marketing not found"})
 		return
 	}
-	var input logistik.Pemasaran
+	var input logistik.Marketing
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -58,7 +60,7 @@ func UpdatePemasaran(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
@@ -74,13 +76,13 @@ func UpdatePemasaran(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeletePemasaran(c *gin.Context) {
+func DeleteMarketing(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistik.Pemasaran{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistik.Marketing{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "pemasaran deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "marketing deleted"})
 }
 
 // #driver
@@ -102,12 +104,14 @@ func CreateDriver(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -132,7 +136,7 @@ func UpdateDriver(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
@@ -158,16 +162,16 @@ func DeleteDriver(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "driver deleted"})
 }
 
-// #kurir
+// #courier
 
-func GetKurirs(c *gin.Context) {
-	var items []logistik.Kurir
+func GetCouriers(c *gin.Context) {
+	var items []logistik.Courier
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
 
-func CreateKurir(c *gin.Context) {
-	var input logistik.Kurir
+func CreateCourier(c *gin.Context) {
+	var input logistik.Courier
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -177,12 +181,14 @@ func CreateKurir(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
 	}
-	if input.Status == "" { input.Status = "Active" }
+	if input.Status == "" {
+		input.Status = "Active"
+	}
 	if err := config.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -190,14 +196,14 @@ func CreateKurir(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func UpdateKurir(c *gin.Context) {
+func UpdateCourier(c *gin.Context) {
 	id := c.Param("id")
-	var existing logistik.Kurir
+	var existing logistik.Courier
 	if err := config.DB.First(&existing, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "kurir not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "courier not found"})
 		return
 	}
-	var input logistik.Kurir
+	var input logistik.Courier
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -207,7 +213,7 @@ func UpdateKurir(c *gin.Context) {
 		return
 	}
 	if input.BranchID != nil {
-		if err := config.DB.First(&logistik.CabangRef{}, *input.BranchID).Error; err != nil {
+		if err := config.DB.First(&logistik.BranchRef{}, *input.BranchID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "branch not found"})
 			return
 		}
@@ -223,11 +229,11 @@ func UpdateKurir(c *gin.Context) {
 	c.JSON(http.StatusOK, existing)
 }
 
-func DeleteKurir(c *gin.Context) {
+func DeleteCourier(c *gin.Context) {
 	id := c.Param("id")
-	if err := config.DB.Delete(&logistik.Kurir{}, id).Error; err != nil {
+	if err := config.DB.Delete(&logistik.Courier{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "kurir deleted"})
+	c.JSON(http.StatusOK, gin.H{"message": "courier deleted"})
 }

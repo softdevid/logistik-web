@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import {
   HomeIcon,
   ChevronDownIcon,
@@ -259,6 +260,8 @@ function DesktopMenuItem({ item, depth = 0, onNavigate }) {
 }
 
 export default function Header() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
@@ -274,6 +277,15 @@ export default function Header() {
   function closeSidebar() {
     setSidebarOpen(false);
   }
+
+  async function handleLogout() {
+    setProfileOpen(false);
+    await logout();
+    navigate("/login", { replace: true });
+  }
+
+  const displayName = user?.name || user?.username || "Admin Sistem";
+  const roleLabel = user?.role === "admin" ? "Administrator" : (user?.role || "Operasional");
 
   return (
     <div className="sticky top-0 z-40 bg-white border-b border-slate-200">
@@ -304,11 +316,11 @@ export default function Header() {
             }`}
           >
             <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-[13px] font-semibold">
-              A
+              {displayName.charAt(0).toUpperCase()}
             </div>
             <div className="hidden lg:flex flex-col items-start leading-tight">
-              <span className="text-[13px] font-semibold text-slate-800">Admin Sistem</span>
-              <span className="text-[11px] text-slate-400">Operasional</span>
+              <span className="text-[13px] font-semibold text-slate-800">{displayName}</span>
+              <span className="text-[11px] text-slate-400">{roleLabel}</span>
             </div>
             <Chevron open={profileOpen} />
           </button>
@@ -324,14 +336,14 @@ export default function Header() {
                 Profil Saya
               </Link>
               <div className="my-1 border-t border-slate-100" />
-              <Link
-                to="/logout"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2 px-4 py-2.5 text-[13.5px] text-rose-500 hover:bg-rose-50 transition-colors"
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-[13.5px] text-rose-500 hover:bg-rose-50 transition-colors"
               >
                 <ArrowRightOnRectangleIcon className="w-4 h-4" />
                 Keluar
-              </Link>
+              </button>
             </div>
           )}
         </div>
