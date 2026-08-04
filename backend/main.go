@@ -5,9 +5,9 @@ import (
 
 	"backend/config"
 	"backend/models"
-	"backend/models/company"
-	"backend/models/hr"
+	"backend/models/logistics"
 	"backend/routes"
+	"backend/utils"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,6 +16,7 @@ import (
 func main() {
 	// konek database dulu sebelum setup routes
 	config.ConnectDatabase()
+	utils.InitJWT()
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
@@ -40,5 +41,17 @@ func main() {
 	)
 
 	routes.SetUpRoutes(r)
-	r.Run() // default listen di :8080, ini harus paling akhir
+	config.DB.AutoMigrate(
+		&models.User{}, &models.RefreshToken{},
+		&models.Vendor{}, &models.Npwp{}, &models.Accounting{},
+		&models.Account{}, &models.Ledger{}, &models.AccountCategory{},
+		&models.ProfitLossCategory{}, &models.CashflowCategory{}, &models.Branch{},
+		&logistics.Province{}, &logistics.Regency{}, &logistics.District{},
+		&logistics.Village{}, &logistics.PostalCode{},
+		&logistics.Marketing{}, &logistics.Driver{}, &logistics.Courier{},
+		&logistics.Mode{}, &logistics.ServiceCategory{}, &logistics.DeliveryService{},
+		&logistics.GoodsType{}, &logistics.CostType{}, &logistics.Term{},
+		&logistics.Vehicle{}, &logistics.VehicleType{}, &logistics.TruckingType{},
+	)
+	r.Run()
 }
