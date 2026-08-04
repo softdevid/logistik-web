@@ -1,13 +1,13 @@
 package main
 
 import (
+	"time"
+
 	"backend/config"
 	"backend/models"
 	"backend/models/logistics"
 	"backend/routes"
 	"backend/utils"
-
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -28,6 +28,17 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	config.DB.AutoMigrate(
+		&company.Company{},
+		&company.Office{},
+		&company.Branch{},
+		&company.Agent{},
+		&models.Department{},
+		&hr.Driver{},
+		&hr.Courier{},
+		&hr.MarketingStaff{},
+	)
 
 	routes.SetUpRoutes(r)
 	config.DB.AutoMigrate(
