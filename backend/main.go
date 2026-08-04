@@ -5,6 +5,7 @@ import (
 
 	"backend/config"
 	"backend/models"
+	"backend/models/company"
 	"backend/models/logistics"
 	"backend/routes"
 	"backend/utils"
@@ -35,9 +36,6 @@ func main() {
 		&company.Branch{},
 		&company.Agent{},
 		&models.Department{},
-		&hr.Driver{},
-		&hr.Courier{},
-		&hr.MarketingStaff{},
 	)
 
 	routes.SetUpRoutes(r)
