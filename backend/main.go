@@ -1,10 +1,13 @@
 package main
 
 import (
-	"backend/config"
-	"backend/routes"
-
 	"time"
+
+	"backend/config"
+	"backend/models"
+	"backend/models/company"
+	"backend/models/hr"
+	"backend/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -25,7 +28,17 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	config.DB.AutoMigrate(
+		&company.Company{},
+		&company.Office{},
+		&company.Branch{},
+		&company.Agent{},
+		&models.Department{},
+		&hr.Driver{},
+		&hr.Courier{},
+		&hr.MarketingStaff{},
+	)
+
 	routes.SetUpRoutes(r)
 	r.Run() // default listen di :8080, ini harus paling akhir
-	// config.DB.AutoMigrate()
 }
