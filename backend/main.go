@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -52,6 +53,35 @@ func main() {
 		&logistics.Mode{}, &logistics.ServiceCategory{}, &logistics.DeliveryService{},
 		&logistics.GoodsType{}, &logistics.CostType{}, &logistics.Term{},
 		&logistics.Vehicle{}, &logistics.VehicleType{}, &logistics.TruckingType{},
+		&logistics.ShipmentStatus{},
 	)
+
+	seedAdmin()
 	r.Run()
+}
+
+// seedAdmin membuat user admin (admin / admin123) jika belum ada.
+func seedAdmin() {
+	var count int64
+	config.DB.Model(&models.User{}).Where("username = ?", "admin").Count(&count)
+	if count > 0 {
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+
+	admin := models.User{
+		Name:     "Admin Sistem",
+		Username: "admin",
+		Email:    "admin@logistik.local",
+		Password: string(hash),
+		Role:     "admin",
+		IsActive: true,
+	}
+	if err := config.DB.Create(&admin).Error; err != nil {
+		return
+	}
 }
