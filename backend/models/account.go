@@ -41,6 +41,12 @@ type Branch struct {
 	Nama string `gorm:"size:100;not null" json:"nama"`
 }
 
+// TableName memisahkan dropdown cabang akuntansi dari tabel
+// cabang perusahaan (company.Branch), agar tidak saling bentrok.
+func (Branch) TableName() string {
+	return "account_branches"
+}
+
 // ============================================================
 // Konstanta untuk field yang pilihannya tetap/baku (bukan master
 // data yang di-CRUD user, cuma kategorisasi standar akuntansi,

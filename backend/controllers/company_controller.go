@@ -23,7 +23,7 @@ func GetAllCompanies(c *gin.Context) {
 }
 
 func GetCompanyByID(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("companyId"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID tidak valid"})
 		return
@@ -50,7 +50,7 @@ func CreateCompany(c *gin.Context) {
 }
 
 func UpdateCompany(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("companyId"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID tidak valid"})
 		return
@@ -76,7 +76,7 @@ func UpdateCompany(c *gin.Context) {
 }
 
 func DeleteCompany(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("companyId"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID tidak valid"})
 		return

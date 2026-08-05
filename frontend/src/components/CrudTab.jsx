@@ -37,8 +37,19 @@ function translateError(msg) {
   return ERROR_MAP[msg] || msg;
 }
 
+// #extractlist — backend kadang mengembalikan array langsung,
+// kadang terbungkus { data: [...] }
+function extractList(body) {
+  if (Array.isArray(body)) return body;
+  if (body && Array.isArray(body.data)) return body.data;
+  return [];
+}
+
 export default function CrudTab({ config }) {
   const [activeTab, setActiveTab] = useState(0);
+  const [activeSubTab, setActiveSubTab] = useState(0);
+  const [parentOptions, setParentOptions] = useState([]);
+  const [parentValue, setParentValue] = useState("");
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -47,9 +58,22 @@ export default function CrudTab({ config }) {
   const [loading, setLoading] = useState(false);
   const [dropdowns, setDropdowns] = useState({});
   const [error, setError] = useState(null);
+  const [customAction, setCustomAction] = useState(null);
 
-  const tab = config.tabs[activeTab];
+  // #activetab — tab bisa flat ({label,endpoint,fields}) atau grup
+  // bertingkat ({label, tabs:[...]}). Sub-tab anak yang butuh induk
+  // (mis. perusahaan) memakai parentField + endpoint berisi {parent}.
+  const group = config.tabs[activeTab];
+  const isNested = Array.isArray(group.tabs);
+  const tab = isNested ? group.tabs[activeSubTab] : group;
   const fields = tab.fields;
+  const idKey = tab.idKey || "id";
+  const parentField = tab.parentField || null;
+  const needsParent = !!parentField;
+  const hasParent = needsParent ? parentValue !== "" && parentValue != null : true;
+  const resolvedEndpoint = needsParent
+    ? tab.endpoint.replace("{parent}", parentValue)
+    : tab.endpoint;
 
   // #buildform
   function buildInitialForm() {
@@ -66,12 +90,17 @@ export default function CrudTab({ config }) {
 
   // #fetchdata
   const fetchData = useCallback(async () => {
+    if (needsParent && !hasParent) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const res = await apiRequest(`/${tab.endpoint}`);
+      const res = await apiRequest(`/${resolvedEndpoint}`);
       if (res.ok) {
-        const data = await res.json();
-        setItems(Array.isArray(data) ? data : []);
+        const body = await res.json();
+        setItems(extractList(body));
       } else {
         setItems([]);
       }
@@ -80,9 +109,30 @@ export default function CrudTab({ config }) {
     } finally {
       setLoading(false);
     }
-  }, [activeTab]);
+  }, [activeTab, activeSubTab, resolvedEndpoint, needsParent, hasParent]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // #fetchparent — dropdown pemilih induk (mis. perusahaan) untuk
+  // sub-tab pengaturan yang butuh company_id
+  useEffect(() => {
+    if (!needsParent) return;
+    let cancelled = false;
+    setParentOptions([]);
+    setParentValue("");
+    apiRequest(`/${parentField.fetch}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        const opts = extractList(data);
+        setParentOptions(opts);
+        setParentValue(opts.length ? String(opts[0][parentField.fetchId]) : "");
+      })
+      .catch(() => {
+        if (!cancelled) setParentOptions([]);
+      });
+    return () => { cancelled = true; };
+  }, [activeTab, activeSubTab]);
 
   // #fetchdropdowns
   useEffect(() => {
@@ -103,7 +153,7 @@ export default function CrudTab({ config }) {
         .then((data) => {
           setDropdowns((prev) => ({
             ...prev,
-            [key]: { options: data, loading: false },
+            [key]: { options: extractList(data), loading: false },
           }));
         })
         .catch(() => {
@@ -113,7 +163,7 @@ export default function CrudTab({ config }) {
           }));
         });
     });
-  }, [activeTab]);
+  }, [activeTab, activeSubTab]);
 
   // #modal
   function openAdd() {
@@ -141,9 +191,22 @@ export default function CrudTab({ config }) {
   // #save
   async function handleSave() {
     setError(null);
+
+    // validasi kolom wajib
+    for (const f of fields) {
+      if (!f.required) continue;
+      const val = form[f.key];
+      if (val === "" || val === undefined || val === null) {
+        setError(`${f.label} harus diisi`);
+        return;
+      }
+    }
+
     const payload = { ...fields.reduce((acc, f) => {
       const val = form[f.key];
       if (f.type === "select" && f.fetch) {
+        acc[f.key] = (val === "" || val === undefined || val === null) ? null : Number(val);
+      } else if (f.type === "number") {
         acc[f.key] = (val === "" || val === undefined || val === null) ? null : Number(val);
       } else if (f.type === "checkbox") {
         acc[f.key] = !!val;
@@ -154,8 +217,8 @@ export default function CrudTab({ config }) {
     }, {}) };
 
     const url = editing
-      ? `/${tab.endpoint}/${editing.id}`
-      : `/${tab.endpoint}`;
+      ? `/${resolvedEndpoint}/${editing[idKey]}`
+      : `/${resolvedEndpoint}`;
     const method = editing ? "PUT" : "POST";
     const res = await apiRequest(url, {
       method,
@@ -174,7 +237,7 @@ export default function CrudTab({ config }) {
   // #delete
   async function handleDelete(id) {
     if (!window.confirm("Yakin ingin menghapus?")) return;
-    const res = await apiRequest(`/${tab.endpoint}/${id}`, {
+    const res = await apiRequest(`/${resolvedEndpoint}/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {
@@ -197,7 +260,15 @@ export default function CrudTab({ config }) {
   // #tabchange
   function handleTabChange(i) {
     setActiveTab(i);
+    setActiveSubTab(0);
     setSearch("");
+    setCustomAction(null);
+  }
+
+  function handleSubTabChange(i) {
+    setActiveSubTab(i);
+    setSearch("");
+    setCustomAction(null);
   }
 
   // #tablecolumns
@@ -220,7 +291,7 @@ export default function CrudTab({ config }) {
         >
           <option value="">-- Pilih --</option>
           {options.map((opt) => {
-            const val = typeof opt === "object" ? opt.id : opt;
+            const val = typeof opt === "object" ? opt[f.fetchId || "id"] : opt;
             const label = typeof opt === "object" ? opt[f.fetchLabel || "nama"] : opt;
             return (
               <option key={val} value={val}>
@@ -282,12 +353,28 @@ export default function CrudTab({ config }) {
       {/* #header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-xl font-bold text-slate-900">{config.title}</h2>
-        <button
-          onClick={openAdd}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0F5C4C] text-white text-sm font-medium rounded-lg hover:bg-[#0C4A3D] transition-colors"
-        >
-          <PlusIcon className="w-4 h-4" /> Tambah
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {(tab.actions || []).map((a) => (
+            <button
+              key={a.label}
+              onClick={() => setCustomAction(a)}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0F5C4C] border border-[#0F5C4C]/40 rounded-lg hover:bg-[#0F5C4C]/[0.06] transition-colors"
+            >
+              {a.icon && <a.icon className="w-4 h-4" />} {a.label}
+            </button>
+          ))}
+          <button
+            onClick={openAdd}
+            disabled={needsParent && !hasParent}
+            className={`inline-flex items-center gap-2 px-4 py-2 bg-[#0F5C4C] text-white text-sm font-medium rounded-lg transition-colors ${
+              needsParent && !hasParent
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-[#0C4A3D]"
+            }`}
+          >
+            <PlusIcon className="w-4 h-4" /> Tambah
+          </button>
+        </div>
       </div>
 
       {/* #tabs */}
@@ -309,6 +396,48 @@ export default function CrudTab({ config }) {
         </div>
       </div>
 
+      {/* #sub-tabs */}
+      {isNested && (
+        <div className="border-b border-slate-100 mb-4">
+          <div className="flex gap-0 overflow-x-auto">
+            {group.tabs.map((t, i) => (
+              <button
+                key={t.label}
+                onClick={() => handleSubTabChange(i)}
+                className={`px-4 py-2 text-[13px] font-medium border-b-2 whitespace-nowrap transition-colors ${
+                  activeSubTab === i
+                    ? "border-[#0F5C4C]/60 text-[#0F5C4C]"
+                    : "border-transparent text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* #parent-selector */}
+      {needsParent && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            {parentField.label}
+          </label>
+          <select
+            value={parentValue}
+            onChange={(e) => setParentValue(e.target.value)}
+            className="w-full sm:w-80 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F5C4C]/30 focus:border-[#0F5C4C]"
+          >
+            <option value="">-- Pilih {parentField.label} --</option>
+            {parentOptions.map((o) => (
+              <option key={o[parentField.fetchId]} value={o[parentField.fetchId]}>
+                {o[parentField.fetchLabel]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* #search */}
       <input
         type="text"
@@ -320,6 +449,11 @@ export default function CrudTab({ config }) {
 
       {/* #table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        {needsParent && !hasParent ? (
+          <div className="p-8 text-center text-slate-400 text-sm">
+            Pilih {parentField.label} terlebih dahulu
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           {loading ? (
             <div className="p-8 text-center text-slate-400 text-sm">
@@ -352,7 +486,7 @@ export default function CrudTab({ config }) {
               <tbody>
                 {filtered.map((item, i) => (
                   <tr
-                    key={item.id}
+                    key={item[idKey]}
                     className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
                   >
                     <td className="px-4 py-3 text-slate-500">{i + 1}</td>
@@ -381,7 +515,7 @@ export default function CrudTab({ config }) {
                           ) : (() => {
                             const dd = dropdowns[f.key];
                             const match = dd?.options?.find(
-                              (o) => String(o.id) === String(item[f.key])
+                              (o) => String(o[f.fetchId || "id"]) === String(item[f.key])
                             );
                             return match ? match[f.fetchLabel || "nama"] : item[f.key];
                           })()
@@ -400,7 +534,7 @@ export default function CrudTab({ config }) {
                           <PencilSquareIcon className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item[idKey])}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
                           title="Hapus"
                         >
@@ -414,6 +548,7 @@ export default function CrudTab({ config }) {
             </table>
           )}
         </div>
+        )}
       </div>
 
       {/* #modal */}
@@ -423,8 +558,8 @@ export default function CrudTab({ config }) {
             className="absolute inset-0 bg-black/40"
             onClick={() => setShowModal(false)}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 shrink-0">
               <h3 className="text-lg font-semibold text-slate-900">
                 {editing ? "Edit" : "Tambah"} {tab.label}
               </h3>
@@ -436,13 +571,13 @@ export default function CrudTab({ config }) {
               </button>
             </div>
             {error && (
-              <div className="px-6 pt-4">
+              <div className="px-6 pt-4 shrink-0">
                 <div className="px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-600">
                   {error}
                 </div>
               </div>
             )}
-            <div className="px-6 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               {fields.map((f) => (
                 <div key={f.key}>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -453,7 +588,7 @@ export default function CrudTab({ config }) {
                 </div>
               ))}
             </div>
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 shrink-0">
               <button
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
@@ -469,6 +604,20 @@ export default function CrudTab({ config }) {
             </div>
           </div>
         </div>
+      )}
+      {/* #custom-modal */}
+      {customAction?.Modal && (
+        <customAction.Modal
+          onClose={() => setCustomAction(null)}
+          companyId={needsParent ? parentValue : undefined}
+          companyName={
+            needsParent
+              ? parentOptions.find(
+                  (o) => String(o[parentField.fetchId]) === String(parentValue)
+                )?.[parentField.fetchLabel]
+              : undefined
+          }
+        />
       )}
     </div>
   );

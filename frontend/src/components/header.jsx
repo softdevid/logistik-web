@@ -32,10 +32,7 @@ const MENU = [
   {
     name: "Kantor",
     icon: BuildingStorefrontIcon,
-    children: [
-      { name: "Perusahaan", link: "/company" },
-      { name: "Kantor Cabang", link: "/branch-offices" },
-    ],
+    link: "/office",
   },
   {
     name: "Master Data",
