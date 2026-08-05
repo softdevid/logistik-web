@@ -8,8 +8,7 @@ import Dashboard from './pages/Dashboard'
 import GroupUser from './pages/setting/GroupUser'
 import UserManagement from './pages/setting/UserManagement'
 import MenuAccess from './pages/setting/MenuAccess'
-import Company from './pages/office/Company'
-import BranchOffice from './pages/office/BranchOffice'
+import Office from './pages/office/Office'
 import AreaLogistic from './pages/master-data/logistics/AreaLogistic'
 import DivisionLogistic from './pages/master-data/logistics/DivisionLogistic'
 import ServicesLogistic from './pages/master-data/logistics/ServicesLogistic'
@@ -49,8 +48,7 @@ function App() {
           <Route path="/group-user" element={<GroupUser />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/hak-akses-menu" element={<MenuAccess />} />
-          <Route path="/company" element={<Company />} />
-          <Route path="/branch-offices" element={<BranchOffice />} />
+          <Route path="/office" element={<Office />} />
           <Route path="/logistics/areas" element={<AreaLogistic />} />
           <Route path="/logistics/division" element={<DivisionLogistic />} />
           <Route path="/logistics/services" element={<ServicesLogistic />} />

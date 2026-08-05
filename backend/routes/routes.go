@@ -40,6 +40,74 @@ func SetUpRoutes(r *gin.Engine) {
 
 		api.GET("/branches", controllers.GetBranches)
 
+		// #office (perusahaan, kantor cabang, agen)
+		companies := api.Group("/companies")
+		{
+			companies.GET("", controllers.GetAllCompanies)
+			companies.GET("/:companyId", controllers.GetCompanyByID)
+			companies.POST("", controllers.CreateCompany)
+			companies.PUT("/:companyId", controllers.UpdateCompany)
+			companies.DELETE("/:companyId", controllers.DeleteCompany)
+
+			// pengaturan perusahaan (tanda tangan invoice, data bank,
+			// dompet digital, notifikasi WA)
+			companies.GET("/:companyId/invoices", controllers.GetCompanyInvoices)
+			companies.POST("/:companyId/invoices", controllers.CreateCompanyInvoice)
+			companies.PUT("/:companyId/invoices/:id", controllers.UpdateCompanyInvoice)
+			companies.DELETE("/:companyId/invoices/:id", controllers.DeleteCompanyInvoice)
+
+			companies.GET("/:companyId/banks", controllers.GetCompanyBanks)
+			companies.POST("/:companyId/banks", controllers.CreateCompanyBank)
+			companies.PUT("/:companyId/banks/:id", controllers.UpdateCompanyBank)
+			companies.DELETE("/:companyId/banks/:id", controllers.DeleteCompanyBank)
+
+			companies.GET("/:companyId/wallets", controllers.GetCompanyDigitalWallets)
+			companies.POST("/:companyId/wallets", controllers.CreateCompanyDigitalWallet)
+			companies.PUT("/:companyId/wallets/:id", controllers.UpdateCompanyDigitalWallet)
+			companies.DELETE("/:companyId/wallets/:id", controllers.DeleteCompanyDigitalWallet)
+
+			companies.GET("/:companyId/whatsapp-notifications", controllers.GetCompanyWhatsappNotifications)
+			companies.POST("/:companyId/whatsapp-notifications", controllers.CreateCompanyWhatsappNotification)
+			companies.PUT("/:companyId/whatsapp-notifications/:id", controllers.UpdateCompanyWhatsappNotification)
+			companies.DELETE("/:companyId/whatsapp-notifications/:id", controllers.DeleteCompanyWhatsappNotification)
+		}
+
+		offices := api.Group("/offices")
+		{
+			offices.GET("", controllers.GetAllOffices)
+			offices.GET("/:id", controllers.GetOfficeByID)
+			offices.POST("", controllers.CreateOffice)
+			offices.PUT("/:id", controllers.UpdateOffice)
+			offices.DELETE("/:id", controllers.DeleteOffice)
+		}
+
+		officeBranches := api.Group("/office-branches")
+		{
+			officeBranches.GET("", controllers.GetAllBranches)
+			officeBranches.GET("/:id", controllers.GetBranchByID)
+			officeBranches.POST("", controllers.CreateBranch)
+			officeBranches.PUT("/:id", controllers.UpdateBranch)
+			officeBranches.DELETE("/:id", controllers.DeleteBranch)
+		}
+
+		agents := api.Group("/agents")
+		{
+			agents.GET("", controllers.GetAllAgents)
+			agents.GET("/:id", controllers.GetAgentByID)
+			agents.POST("", controllers.CreateAgent)
+			agents.PUT("/:id", controllers.UpdateAgent)
+			agents.DELETE("/:id", controllers.DeleteAgent)
+		}
+
+		departments := api.Group("/departments")
+		{
+			departments.GET("", controllers.GetAllDepartments)
+			departments.GET("/:id", controllers.GetDepartmentByID)
+			departments.POST("", controllers.CreateDepartment)
+			departments.PUT("/:id", controllers.UpdateDepartment)
+			departments.DELETE("/:id", controllers.DeleteDepartment)
+		}
+
 		// #shipmentstatus
 		shipmentStatuses := api.Group("/shipment-statuses")
 		{

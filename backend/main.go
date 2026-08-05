@@ -36,6 +36,10 @@ func main() {
 		&company.Office{},
 		&company.Branch{},
 		&company.Agent{},
+		&company.CompanyInvoice{},
+		&company.CompanyBank{},
+		&company.CompanyDigitalWallet{},
+		&company.CustomerWhatsappNotification{},
 		&models.Department{},
 	)
 
