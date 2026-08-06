@@ -17,7 +17,6 @@ import {
   TicketIcon,
 } from "@heroicons/react/24/outline";
 
-
 const MENU = [
   { name: "Dashboard", link: "/", icon: HomeIcon },
   {
@@ -38,13 +37,14 @@ const MENU = [
     name: "Master Data",
     icon: ListBulletIcon,
     children: [
-      { name: "Logistik",
+      {
+        name: "Logistik",
         children: [
           { name: "Area Logistik", link: "/logistics/areas" },
           { name: "Divisi Logistik", link: "/logistics/division" },
           { name: "Layanan Logistik", link: "/logistics/services" },
           { name: "Kendaraan Logistik", link: "/logistics/vehicles" },
-        ]
+        ],
       },
       { name: "Vendor", link: "/vendor" },
       { name: "Perkiraan", link: "/perkiraan" },
@@ -61,11 +61,19 @@ const MENU = [
     icon: FolderOpenIcon,
     children: [
       { name: "Pemasaran/Penjualan", link: "/marketing" },
-      { name: "Layanan Pelanggan", children: [
-        { name: "Transaksi", link: "/transactions" },
-        { name: "Booking", link: "/bookings" },
-      ]},
-      { name: "Operasional", link: "/operations" },
+      {
+        name: "Layanan Pelanggan",
+        children: [
+          { name: "Transaksi", link: "/transactions" },
+          { name: "Booking", link: "/bookings" },
+        ],
+      },
+      {
+        name: "Operasional",
+        children: [
+          { name: "Manifest", link: "/manifest" },
+        ],
+      },
     ],
   },
   {
@@ -84,7 +92,6 @@ const MENU = [
     link: "/ticketting",
   },
 ];
-
 
 function Chevron({ open, className = "" }) {
   return (
@@ -130,7 +137,9 @@ function MobileMenuItem({ item, depth = 0, onNavigate }) {
         } ${depth === 0 ? "px-3" : "pl-10 pr-3"}`}
       >
         {depth === 0 && Icon && (
-          <Icon className={`w-[18px] h-[18px] ${open ? "text-[#0F5C4C]" : "text-slate-400"}`} />
+          <Icon
+            className={`w-[18px] h-[18px] ${open ? "text-[#0F5C4C]" : "text-slate-400"}`}
+          />
         )}
         <span className="flex-1 text-left">{item.name}</span>
         {depth === 0 ? (
@@ -144,7 +153,12 @@ function MobileMenuItem({ item, depth = 0, onNavigate }) {
       {open && (
         <div className="ml-4 border-l border-slate-100">
           {item.children.map((child) => (
-            <MobileMenuItem key={child.name} item={child} depth={depth + 1} onNavigate={onNavigate} />
+            <MobileMenuItem
+              key={child.name}
+              item={child}
+              depth={depth + 1}
+              onNavigate={onNavigate}
+            />
           ))}
         </div>
       )}
@@ -205,13 +219,17 @@ function DesktopMenuItem({ item, depth = 0, onNavigate }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={`group flex items-center gap-2 px-3.5 py-2 rounded-lg text-[14px] font-medium transition-colors ${
-            open ? "text-[#0F5C4C] bg-[#0F5C4C]/[0.06]" : "text-slate-600 hover:text-[#0F5C4C] hover:bg-[#0F5C4C]/[0.06]"
+            open
+              ? "text-[#0F5C4C] bg-[#0F5C4C]/[0.06]"
+              : "text-slate-600 hover:text-[#0F5C4C] hover:bg-[#0F5C4C]/[0.06]"
           }`}
         >
           {Icon && (
             <Icon
               className={`w-[18px] h-[18px] transition-colors ${
-                open ? "text-[#0F5C4C]" : "text-slate-400 group-hover:text-[#0F5C4C]"
+                open
+                  ? "text-[#0F5C4C]"
+                  : "text-slate-400 group-hover:text-[#0F5C4C]"
               }`}
             />
           )}
@@ -222,7 +240,12 @@ function DesktopMenuItem({ item, depth = 0, onNavigate }) {
         {open && (
           <div className="absolute left-0 top-[calc(100%+8px)] min-w-[220px] py-1.5 bg-white rounded-xl border border-slate-200 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.18)] z-50">
             {item.children.map((child) => (
-              <DesktopMenuItem key={child.name} item={child} depth={depth + 1} onNavigate={onNavigate} />
+              <DesktopMenuItem
+                key={child.name}
+                item={child}
+                depth={depth + 1}
+                onNavigate={onNavigate}
+              />
             ))}
           </div>
         )}
@@ -236,7 +259,9 @@ function DesktopMenuItem({ item, depth = 0, onNavigate }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={`w-full flex items-center justify-between px-4 py-2.5 text-[13.5px] transition-colors ${
-          open ? "text-[#0F5C4C] bg-[#0F5C4C]/[0.06]" : "text-slate-600 hover:text-[#0F5C4C] hover:bg-[#0F5C4C]/[0.06]"
+          open
+            ? "text-[#0F5C4C] bg-[#0F5C4C]/[0.06]"
+            : "text-slate-600 hover:text-[#0F5C4C] hover:bg-[#0F5C4C]/[0.06]"
         }`}
       >
         {item.name}
@@ -248,7 +273,12 @@ function DesktopMenuItem({ item, depth = 0, onNavigate }) {
       {open && (
         <div className="absolute left-[calc(100%+4px)] top-0 min-w-[200px] py-1.5 bg-white rounded-xl border border-slate-200 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.18)] z-50">
           {item.children.map((child) => (
-            <DesktopMenuItem key={child.name} item={child} depth={depth + 1} onNavigate={onNavigate} />
+            <DesktopMenuItem
+              key={child.name}
+              item={child}
+              depth={depth + 1}
+              onNavigate={onNavigate}
+            />
           ))}
         </div>
       )}
@@ -265,7 +295,8 @@ export default function Header() {
 
   useEffect(() => {
     function onClickOutside(e) {
-      if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+      if (profileRef.current && !profileRef.current.contains(e.target))
+        setProfileOpen(false);
     }
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
@@ -282,7 +313,8 @@ export default function Header() {
   }
 
   const displayName = user?.name || user?.username || "Admin Sistem";
-  const roleLabel = user?.role === "admin" ? "Administrator" : (user?.role || "Operasional");
+  const roleLabel =
+    user?.role === "admin" ? "Administrator" : user?.role || "Operasional";
 
   return (
     <div className="sticky top-0 z-40 bg-white border-b border-slate-200">
@@ -293,14 +325,14 @@ export default function Header() {
             onClick={() => setSidebarOpen((v) => !v)}
             className="md:hidden p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
           >
-            {sidebarOpen ? <XMarkIcon className="w-5 h-5" /> : <Bars3Icon className="w-5 h-5" />}
+            {sidebarOpen ? (
+              <XMarkIcon className="w-5 h-5" />
+            ) : (
+              <Bars3Icon className="w-5 h-5" />
+            )}
           </button>
           <div className="flex items-center gap-2.5">
-            <img
-              src="/logo.svg"
-              alt="Logo"
-              className="w-20"
-            />
+            <img src="/logo.svg" alt="Logo" className="w-20" />
           </div>
         </div>
 
@@ -309,14 +341,18 @@ export default function Header() {
             type="button"
             onClick={() => setProfileOpen((v) => !v)}
             className={`flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full border transition-colors ${
-              profileOpen ? "border-[#0F5C4C]/30 bg-[#0F5C4C]/[0.06]" : "border-slate-200 hover:border-slate-300"
+              profileOpen
+                ? "border-[#0F5C4C]/30 bg-[#0F5C4C]/[0.06]"
+                : "border-slate-200 hover:border-slate-300"
             }`}
           >
             <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-[13px] font-semibold">
               {displayName.charAt(0).toUpperCase()}
             </div>
             <div className="hidden lg:flex flex-col items-start leading-tight">
-              <span className="text-[13px] font-semibold text-slate-800">{displayName}</span>
+              <span className="text-[13px] font-semibold text-slate-800">
+                {displayName}
+              </span>
               <span className="text-[11px] text-slate-400">{roleLabel}</span>
             </div>
             <Chevron open={profileOpen} />
@@ -349,21 +385,24 @@ export default function Header() {
       {/* Desktop nav */}
       <nav className="hidden md:flex items-center gap-1 px-6 lg:px-8 h-[50px] border-t border-slate-200">
         {MENU.map((item) => (
-          <DesktopMenuItem key={item.name} item={item} onNavigate={() => setProfileOpen(false)} />
+          <DesktopMenuItem
+            key={item.name}
+            item={item}
+            onNavigate={() => setProfileOpen(false)}
+          />
         ))}
       </nav>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/30" onClick={closeSidebar} />
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={closeSidebar}
+          />
           <div className="absolute inset-y-0 left-0 w-72 bg-white shadow-xl flex flex-col">
             <div className="px-4 h-[60px] flex items-center justify-between border-b border-slate-200 shrink-0">
-              <img
-                src="/logo.svg"
-                alt="Logo"
-                className="w-20"
-              />
+              <img src="/logo.svg" alt="Logo" className="w-20" />
               <button
                 type="button"
                 onClick={closeSidebar}
@@ -374,7 +413,11 @@ export default function Header() {
             </div>
             <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
               {MENU.map((item) => (
-                <MobileMenuItem key={item.name} item={item} onNavigate={closeSidebar} />
+                <MobileMenuItem
+                  key={item.name}
+                  item={item}
+                  onNavigate={closeSidebar}
+                />
               ))}
             </nav>
           </div>

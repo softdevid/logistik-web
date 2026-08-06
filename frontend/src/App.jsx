@@ -27,6 +27,7 @@ import FinancialReport from './pages/reports/FinancialReport'
 import CustomerReports from './pages/reports/CustomerReports'
 import Ticketting from './pages/ticketting/Ticketting'
 import Profile from './pages/Profile'
+import Manifest from './pages/module/Manifest'
 
 function AppLayout() {
   return (
@@ -42,7 +43,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      {/* <Route element={<RequireAuth />}> */}
+      <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/group-user" element={<GroupUser />} />
@@ -60,7 +61,7 @@ function App() {
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/transactions" element={<Transaction />} />
           <Route path="/bookings" element={<Booking />} />
-          <Route path="/operations" element={<Operations />} />
+          <Route path="/manifest" element={<Manifest />} />
           <Route path="/branch-reports" element={<BranchReport />} />
           <Route path="/courier-reports" element={<CourierReport />} />
           <Route path="/financial-reports" element={<FinancialReport />} />
@@ -68,7 +69,7 @@ function App() {
           <Route path="/ticketting" element={<Ticketting />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
-      {/* </Route> */}
+      </Route>
     </Routes>
   )
 }
