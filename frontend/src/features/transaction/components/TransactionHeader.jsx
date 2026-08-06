@@ -11,10 +11,10 @@ const TransactionHeader = ({handleTemplateDownload, setImportOpen, openCreate}) 
         <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
           On Site Outbound
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
+        {/* <p className="mt-1 text-sm text-slate-500">
           Kelola transaksi outbound on site, impor AWB, dan entry manual dalam
           satu layar.
-        </p>
+        </p> */}
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
