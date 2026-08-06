@@ -1,0 +1,1 @@
+export const STATUS_OPTIONS = ["Open", "In Transit", "Delivered", "Cancelled"];
