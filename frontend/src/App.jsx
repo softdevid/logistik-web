@@ -42,7 +42,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route element={<RequireAuth />}>
+      {/* <Route element={<RequireAuth />}> */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/group-user" element={<GroupUser />} />
@@ -68,7 +68,7 @@ function App() {
           <Route path="/ticketting" element={<Ticketting />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
-      </Route>
+      {/* </Route> */}
     </Routes>
   )
 }
