@@ -20,8 +20,17 @@ import Akunting from './pages/akunting/Akunting'
 import Marketing from './pages/module/Marketing'
 import Transaction from './pages/module/Transaction'
 import Booking from './pages/module/Booking'
-import Operations from './pages/module/Operations'
-import BranchReport from './pages/reports/BranchReport'
+import BranchReportsIndex from './pages/reports/branch/BranchReportsIndex'
+import TransactionDetailsReport from './pages/reports/branch/TransactionDetailsReport'
+import ManifestOutboundReport from './pages/reports/branch/ManifestOutboundReport'
+import DeliveryReport from './pages/reports/branch/DeliveryReport'
+import GrossProfitReport from './pages/reports/branch/GrossProfitReport'
+import RekapGrossProfitReport from './pages/reports/branch/RekapGrossProfitReport'
+import ManifestVendorReport from './pages/reports/branch/ManifestVendorReport'
+import AwbReport from './pages/reports/branch/AwbReport'
+import CustomerMonthlySummaryReport from './pages/reports/branch/CustomerMonthlySummaryReport'
+import DailyTurnoverSummaryReport from './pages/reports/branch/DailyTurnoverSummaryReport'
+import InboundTransactionDetailsReport from './pages/reports/branch/InboundTransactionDetailsReport'
 import CourierReport from './pages/reports/CourierReport'
 import FinancialReport from './pages/reports/FinancialReport'
 import CustomerReports from './pages/reports/CustomerReports'
@@ -62,7 +71,17 @@ function App() {
           <Route path="/transactions" element={<Transaction />} />
           <Route path="/bookings" element={<Booking />} />
           <Route path="/manifest" element={<Manifest />} />
-          <Route path="/branch-reports" element={<BranchReport />} />
+          <Route path="/branch-reports" element={<BranchReportsIndex />} />
+          <Route path="/branch-reports/transaction-details" element={<TransactionDetailsReport />} />
+          <Route path="/branch-reports/manifest-outbound" element={<ManifestOutboundReport />} />
+          <Route path="/branch-reports/delivery" element={<DeliveryReport />} />
+          <Route path="/branch-reports/gross-profit" element={<GrossProfitReport />} />
+          <Route path="/branch-reports/rekap-gross-profit" element={<RekapGrossProfitReport />} />
+          <Route path="/branch-reports/manifest-vendor" element={<ManifestVendorReport />} />
+          <Route path="/branch-reports/awb" element={<AwbReport />} />
+          <Route path="/branch-reports/customer-monthly-summary" element={<CustomerMonthlySummaryReport />} />
+          <Route path="/branch-reports/daily-turnover-summary" element={<DailyTurnoverSummaryReport />} />
+          <Route path="/branch-reports/inbound-transaction-details" element={<InboundTransactionDetailsReport />} />
           <Route path="/courier-reports" element={<CourierReport />} />
           <Route path="/financial-reports" element={<FinancialReport />} />
           <Route path="/customer-reports" element={<CustomerReports />} />

@@ -28,7 +28,14 @@ func ConnectDatabase() {
 		os.Getenv("DB_TIMEZONE"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		// Model "branches" di-define di dua tempat dengan primary key
+		// berbeda (company.Branch pakai branch_id, logistics.BranchRef
+		// pakai id), sehingga pembuatan foreign key saat migrate gagal
+		// dengan error 42830. FK constraint tidak dipakai di logika
+		// aplikasi, jadi dimatikan saat migrate.
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		panic("gagal konek ke database: " + err.Error())
 	}

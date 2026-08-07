@@ -1,5 +1,6 @@
 import React from "react";
 import { STATUS_OPTIONS } from "../constants/status";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export const emptyForm = {
   awbNo: "",

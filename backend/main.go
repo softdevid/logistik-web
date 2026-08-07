@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"time"
 
 	"backend/config"
@@ -20,10 +21,23 @@ func main() {
 	config.ConnectDatabase()
 	utils.InitJWT()
 	r := gin.Default()
+
+	// daftar origin yang diizinkan CORS, diambil dari env CORS_ORIGINS
+	// (dipisah koma). Default: localhost:3000 (dev).
+	// defaultOrigins := []string{"http://localhost:3000"}
+	// if env := os.Getenv("CORS_ORIGINS"); env != "" {
+	// 	parts := strings.Split(env, ",")
+	// 	defaultOrigins = []string{}
+	// 	for _, p := range parts {
+	// 		if p = strings.TrimSpace(p); p != "" {
+	// 			defaultOrigins = append(defaultOrigins, p)
+	// 		}
+	// 	}
+	// }
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-		},
+		// AllowOrigins:     defaultOrigins,
+		AllowOrigins: []string{"http://red.arvemart.com", "https://red.arvemart.com"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept", "x-api-key"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -59,7 +73,11 @@ func main() {
 	)
 
 	seedAdmin()
-	r.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 }
 
 // seedAdmin membuat user admin (admin / admin123) jika belum ada.
